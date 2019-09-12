@@ -99,39 +99,39 @@
   <meta name="description" content="进一步了解Redis的内存模型">
 <meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis内存模型及应用解读">
-<meta property="og:url" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/index.html">
+<meta property="og:title" content="深入学习Redis之内存模型">
+<meta property="og:url" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
 <meta property="og:description" content="进一步了解Redis的内存模型">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic1.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic2.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic3.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic4.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic5.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic6.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic7.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic8.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic9.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic10.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic11.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic12.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic13.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic14.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic15.webp">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic16.webp">
-<meta property="og:updated_time" content="2019-09-09T04:59:41.581Z">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic1.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic2.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic3.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic4.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic5.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic6.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic7.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic8.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic9.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic10.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic11.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic12.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic13.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic14.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic15.webp">
+<meta property="og:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic16.webp">
+<meta property="og:updated_time" content="2019-09-11T05:26:55.297Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis内存模型及应用解读">
+<meta name="twitter:title" content="深入学习Redis之内存模型">
 <meta name="twitter:description" content="进一步了解Redis的内存模型">
-<meta name="twitter:image" content="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic1.webp">
+<meta name="twitter:image" content="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic1.webp">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/">
+  <link rel="canonical" href="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/">
 
 
 
@@ -141,7 +141,7 @@
   };
 </script>
 
-  <title>Redis内存模型及应用解读 | JieSunn - BLOG</title>
+  <title>深入学习Redis之内存模型 | JieSunn - BLOG</title>
   
 
 
@@ -379,7 +379,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/04/03/2019-04-03-Redis内存模型及应用解读/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/04/04/2019-04-04-深入学习Redis之内存模型/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -396,7 +396,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Redis内存模型及应用解读
+          <h1 class="post-title" itemprop="name headline">深入学习Redis之内存模型
 
               
             
@@ -422,7 +422,7 @@
                 
               
 
-              <time title="创建时间：2019-04-03 13:49:01" itemprop="dateCreated datePublished" datetime="2019-04-03T13:49:01+08:00">2019-04-03</time>
+              <time title="创建时间：2019-04-04 13:49:01" itemprop="dateCreated datePublished" datetime="2019-04-04T13:49:01+08:00">2019-04-04</time>
             
 
             
@@ -519,7 +519,7 @@
 <p>如果Redis服务器中的内存碎片已经很大，可以通过安全重启的方式减小内存碎片。因为重启之后，Redis重新从备份文件中读取数据，在内存中进行重排，为每个数据重新选择合适的内存单元，减小内存碎片。</p>
 <h3 id="Redis数据存储的细节"><a href="#Redis数据存储的细节" class="headerlink" title="Redis数据存储的细节"></a>Redis数据存储的细节</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>关于Redis数据存储的细节，涉及到内存分配器（如jemalloc）、简单动态字符串（SDS）、5种对象类型及内部编码、RedisObject。在讲述具体内容之前，先说明一下这几个概念之间的关系。</p>
 <p>下图是执行set hello world时，所涉及到的数据模型。</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic1.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic1.webp">
 
 <p><strong>（1）dictEntry：</strong>Redis是Key-Value数据库，因此对每个键值对都会有一个dictEntry，里面存储了指向Key和Value的指针；next指向下一个dictEntry，与本Key-Value无关。</p>
 <p><strong>（2）Key：</strong>图中右上角可见，Key（“hello”）并不是直接以字符串存储，而是存储在SDS结构中。</p>
@@ -530,7 +530,7 @@
 <h4 id="jemalloc"><a href="#jemalloc" class="headerlink" title="jemalloc"></a>jemalloc</h4><p>Redis在编译时便会指定内存分配器；内存分配器可以是 libc 、jemalloc或者tcmalloc，默认是jemalloc。</p>
 <p>jemalloc作为Redis的默认内存分配器，在减小内存碎片方面做的相对比较好。jemalloc在64位系统中，将内存空间划分为小、大、巨大三个范围；每个范围内又划分了许多小的内存块单位；当Redis存储数据时，会选择大小最合适的内存块进行存储。</p>
 <p>jemalloc划分的内存单元如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic2.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic2.webp">
 
 <p>例如，如果需要存储大小为130字节的对象，jemalloc会将其放入160字节的内存单元中。</p>
 <h4 id="RedisObject"><a href="#RedisObject" class="headerlink" title="RedisObject"></a>RedisObject</h4><p>前面说到，Redis对象有5种类型；无论是哪种类型，Redis都不会直接存储，而是通过RedisObject对象进行存储。</p>
@@ -541,18 +541,18 @@
 <p>RedisObject的每个字段的含义和作用如下：</p>
 <h5 id="type"><a href="#type" class="headerlink" title="type"></a>type</h5><p>type字段表示对象的类型，占4个比特；目前包括REDIS_STRING(字符串)、REDIS_LIST (列表)、REDIS_HASH(哈希)、REDIS_SET(集合)、REDIS_ZSET(有序集合)。</p>
 <p>当我们执行type命令时，便是通过读取RedisObject的type字段获得对象的类型。如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic3.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic3.webp">
 
 <h5 id="encoding"><a href="#encoding" class="headerlink" title="encoding"></a>encoding</h5><p>encoding表示对象的内部编码，占4个比特。</p>
 <p>对于Redis支持的每种类型，都有至少两种内部编码，例如对于字符串，有int、embstr、raw三种编码。通过encoding属性，Redis可以根据不同的使用场景来为对象设置不同的编码，大大提高了Redis的灵活性和效率。</p>
 <p>以列表对象为例，有压缩列表和双端链表两种编码方式；如果列表中的元素较少，Redis倾向于使用压缩列表进行存储，因为压缩列表占用内存更少，而且比双端链表可以更快载入；当列表对象元素较多时，压缩列表就会转化为更适合存储大量元素的双端链表。</p>
 <p>通过object encoding命令，可以查看对象采用的编码方式，如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic4.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic4.webp">
 
 <p>5种对象类型对应的编码方式以及使用条件，将在后面介绍。</p>
 <h5 id="lru"><a href="#lru" class="headerlink" title="lru"></a>lru</h5><p>lru记录的是对象最后一次被命令程序访问的时间，占据的比特数不同的版本有所不同（如4.0版本占24比特，2.6版本占22比特）。</p>
 <p>通过对比lru时间与当前时间，可以计算某个对象的空转时间；object idletime命令可以显示该空转时间（单位是秒）。object idletime命令的一个特殊之处在于它不改变对象的lru值。</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic5.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic5.webp">
 
 <p>lru值除了通过object idletime命令打印之外，还与Redis的内存回收有关系：如果Redis打开了maxmemory选项，且内存回收算法选择的是volatile-lru或allkeys—lru，那么当Redis内存占用超过maxmemory指定的值时，Redis会优先选择空转时间最长的对象进行释放。</p>
 <h5 id="refcount"><a href="#refcount" class="headerlink" title="refcount"></a>refcount</h5><h6 id="refcount与共享对象"><a href="#refcount与共享对象" class="headerlink" title="refcount与共享对象"></a>refcount与共享对象</h6><p>refcount记录的是该对象被引用的次数，类型为整型。refcount的作用，主要在于对象的引用计数和内存回收：</p>
@@ -572,7 +572,7 @@
 <p>虽然共享对象只能是整数值的字符串对象，但是5种类型都可能使用共享对象（如哈希、列表等的元素可以使用）。</p>
 <p>就目前的实现来说，Redis服务器在初始化时，会创建10000个字符串对象，值分别是0<del>9999的整数值；当Redis需要使用值为0</del>9999的字符串对象时，可以直接使用这些共享对象。10000这个数字可以通过调整参数REDIS_SHARED_INTEGERS（4.0中是OBJ_SHARED_INTEGERS）的值进行改变。</p>
 <p>共享对象的引用次数可以通过object refcount命令查看，如下图所示。命令执行的结果页佐证了只有0~9999之间的整数会作为共享对象。</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic6.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic6.webp">
 
 <h5 id="ptr"><a href="#ptr" class="headerlink" title="ptr"></a>ptr</h5><p>ptr指针指向具体的数据，如前面的例子中，set hello world，ptr指向包含字符串world的SDS。</p>
 <h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>综上所述，redisObject的结构与对象类型、编码、内存回收、共享对象都有关系；一个redisObject对象的大小为16字节：</p>
@@ -583,7 +583,7 @@
 
 <p>其中，buf表示字节数组，用来存储字符串；len表示buf已使用的长度，free表示buf未使用的长度。</p>
 <p>下面是两个例子：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic7.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic7.webp">
 
 <p>通过SDS的结构可以看出，buf数组的长度=free+len+1（其中1表示字符串结尾的空字符）；所以，一个SDS结构占据的空间为：free所占长度+len所占长度+ buf数组的长度=4+4+free+len+1=free+len+9。</p>
 <h5 id="SDS与C字符串的比较"><a href="#SDS与C字符串的比较" class="headerlink" title="SDS与C字符串的比较"></a>SDS与C字符串的比较</h5><p>SDS在C字符串的基础上加入了free和len字段，带来了很多好处：</p>
@@ -598,7 +598,7 @@
 <p>只有在字符串不会改变的情况下，如打印日志时，才会使用C字符串。</p>
 <h3 id="Redis的对象类型与内部编码"><a href="#Redis的对象类型与内部编码" class="headerlink" title="Redis的对象类型与内部编码"></a>Redis的对象类型与内部编码</h3><p>前面已经说过，Redis支持5种对象类型，而每种结构都有至少两种编码。这样做的好处在于：一方面接口与实现分离，当需要增加或改变内部编码时，用户使用不受影响，另一方面可以根据不同的应用场景切换内部编码，提高效率。</p>
 <p>Redis各种对象类型支持的内部编码如下图所示（图中版本是Redis3.0，Redis后面版本中又增加了内部编码，略过不提。本章所介绍的内部编码都是基于3.0的）：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic8.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic8.webp">
 
 <p>关于Redis内部编码的转换，都符合以下规律：编码转换在Redis写入数据时完成，且转换过程不可逆，只能从小内存编码向大内存编码转换。</p>
 <h4 id="字符串（String）"><a href="#字符串（String）" class="headerlink" title="字符串（String）"></a>字符串（String）</h4><h5 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h5><p>字符串是最基础的类型，因为所有的键都是字符串类型，且字符串之外的其他几种复杂类型的元素也是字符串。字符串长度不能超过512MB。</p>
@@ -609,18 +609,18 @@
 <li>raw：大于39个字节的字符串</li>
 </ul>
 <p>示例如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic9.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic9.webp">
 
 <p>embstr和raw进行区分的长度是39是因为RedisObject的长度是16字节，SDS的长度是9+字符串长度.因此当字符串长度是39时，embstr的长度正好是16+9+39=64，jemalloc正好可以分配64字节的内存单元。</p>
 <h5 id="编码转换"><a href="#编码转换" class="headerlink" title="编码转换"></a>编码转换</h5><p>当int数据不再是整数，或大小超过了long的范围时，自动转化为raw。</p>
 <p>而对于embstr，由于其实现是只读的，因此在对embstr对象进行修改时，都会先转化为raw再进行修改，因此，只要是修改embstr对象，修改后的对象一定是raw的，无论是否达到了39个字节。</p>
 <p>示例如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic10.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic10.webp">
 
 <h4 id="列表（List）"><a href="#列表（List）" class="headerlink" title="列表（List）"></a>列表（List）</h4><h5 id="概况-1"><a href="#概况-1" class="headerlink" title="概况"></a>概况</h5><p>列表（list）用来存储多个有序的字符串，每个字符串称为元素；一个列表可以存储2^32-1个元素。Redis中的列表支持两端插入和弹出，并可以获得指定位置（或范围）的元素，可以充当数组、队列、栈等。</p>
 <h5 id="内部编码-1"><a href="#内部编码-1" class="headerlink" title="内部编码"></a>内部编码</h5><p>列表的内部编码可以是压缩列表（ziplist）或双端链表（linkedlist）。</p>
 <p><strong>双端链表：</strong>由一个list结构和多个listNode结构组成，典型结构如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic11.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic11.webp">
 
 <p>通过图中可以看出，双端链表同时保存了表头指针和表尾指针，并且每个节点都有指向前和指向后的指针。链表中保存了列表的长度，dup、free和match为节点值设置类型特定函数，所以链表可以用于保存各种不同类型的值。而链表中每个节点指向的是type为字符串的RedisObject。</p>
 <p><strong>压缩列表：</strong>压缩列表是Redis为了节约内存而开发的，是由一系列特殊编码的连续内存块（而不是像双端链表一样每个节点是指针）组成的顺序型数据结构；具体结构相对比较复杂，略。与双端链表相比，压缩列表可以节省内存空间，但是进行修改或增删操作时，复杂度较高，因此当节点数量较少时，可以使用压缩列表。但是节点数量多时，还是使用双端链表划算。</p>
@@ -632,7 +632,7 @@
 </ul>
 <p>如果有一个条件不满足，则使用双端列表，且编码只可能由压缩列表转化为双端链表，反方向则不可能。</p>
 <p>下图展示了列表编码转换的特点：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic12.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic12.webp">
 
 <p>其中，单个字符串不能超过64字节，是为了便于统一分配每个节点的长度。这里的64字节是指字符串的长度，不包括SDS结构，因为压缩列表使用连续、定长内存块存储字符串，不需要SDS结构指明长度。后面提到压缩列表，也会强调长度不超过64字节，原理与这里类似。</p>
 <h4 id="哈希（Hash）"><a href="#哈希（Hash）" class="headerlink" title="哈希（Hash）"></a>哈希（Hash）</h4><h5 id="概况-2"><a href="#概况-2" class="headerlink" title="概况"></a>概况</h5><p>哈希作为一种数据结构，不仅与字符串、列表、集合、有序结合并列，是Redis对外提供的5种对象类型的一种，也是Redis作为Key-Value数据库所使用的数据结构。为了说明的方便，在本文后面当使用“内层的哈希”时，代表的是Redis对外提供的5种对象类型的一种；使用“外层的哈希”代指Redis作为Key-Value数据库所使用的数据结构。</p>
@@ -640,7 +640,7 @@
 <p>压缩列表前面已介绍。与哈希表相比，压缩列表用于元素个数少、元素长度小的场景，其优势在于集中存储，节省空间。同时，虽然对于元素的操作复杂度也由O(n)变为了O(1)，但由于哈希中元素数量较少，因此操作的时间并没有明显劣势。</p>
 <p>hashtable：一个hashtable由1个dict结构、2个dictht结构、1个dictEntry指针数组（称为bucket）和多个dictEntry结构组成。</p>
 <p>正常情况下，即hashtable没有进行rehash时，各部分关系如下图所示：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic13.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic13.webp">
 
 <p>下面从底层向上依次介绍各个部分：</p>
 <h6 id="dictEntry"><a href="#dictEntry" class="headerlink" title="dictEntry"></a>dictEntry</h6><p>dictEntry结构用于保存键值对，结构定义如下：</p>
@@ -680,7 +680,7 @@
 </ul>
 <p>如果有一个条件不满足，则使用哈希表；且编码只可能由压缩列表转化为哈希表，反方向则不可能。</p>
 <p>下图展示了Redis内层的哈希编码转换的特点：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic14.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic14.webp">
 
 <h4 id="集合（Set）"><a href="#集合（Set）" class="headerlink" title="集合（Set）"></a>集合（Set）</h4><h5 id="概况-3"><a href="#概况-3" class="headerlink" title="概况"></a>概况</h5><p>集合（set）与列表类似，都是用来保存多个字符串，但集合与列表有两点不同：集合中的元素是无序的，因此不能通过索引来操作元素；集合中的元素不能有重复。</p>
 <p>一个集合中最多可以存储2^32-1个元素，除了支持常规的增删改查，Redis还支持多个集合取交集、并集、差集。</p>
@@ -698,7 +698,7 @@
 </ul>
 <p>如果有一个条件不满足，则使用哈希表；且编码只可能由整数集合转化为哈希表，反方向则不可能。</p>
 <p>下图展示了集合编码转换的特点：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic15.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic15.webp">
 
 <h4 id="有序集合（ZSet）"><a href="#有序集合（ZSet）" class="headerlink" title="有序集合（ZSet）"></a>有序集合（ZSet）</h4><h5 id="概况-4"><a href="#概况-4" class="headerlink" title="概况"></a>概况</h5><p>有序集合与集合一样，元素都不能重复。但与集合不同的是，有序集合中的元素是有顺序的。与列表使用索引下标作为排序依据不同，有序集合为每个元素设置一个分数（score）作为排序依据。</p>
 <h5 id="内部编码-4"><a href="#内部编码-4" class="headerlink" title="内部编码"></a>内部编码</h5><p>有序集合的内部编码可以是压缩列表（ziplist）或跳跃表（skiplist）。ziplist在列表和哈希中都有使用，前面已经讲过，这里略过不提。</p>
@@ -712,7 +712,7 @@
 </ul>
 <p>如果有一个条件不满足，则使用跳跃表；且编码只可能由压缩列表转化为跳跃表，反方向则不可能。</p>
 <p>下图展示了有序集合编码转换的特点：</p>
-<img src="/2019/04/03/2019-04-03-Redis内存模型及应用解读/pic16.webp">
+<img src="/2019/04/04/2019-04-04-深入学习Redis之内存模型/pic16.webp">
 
 <h3 id="应用举例"><a href="#应用举例" class="headerlink" title="应用举例"></a>应用举例</h3><p>了解Redis的内存模型之后，下面通过几个例子说明其应用。</p>
 <h4 id="估算Redsi内存使用量"><a href="#估算Redsi内存使用量" class="headerlink" title="估算Redsi内存使用量"></a>估算Redsi内存使用量</h4><p>要估算Redis中的数据占据的内存大小，需要对Redis的内存模型有比较全面的了解，包括前面介绍的hashtable、SDS、RedisObject、各种对象类型的编码方式等。</p>
@@ -799,8 +799,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/05/2019-04-05-Redis持久化/" rel="prev" title="Redis持久化">
-                Redis持久化 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/05/2019-04-05-深入学习Redis之持久化/" rel="prev" title="深入学习Redis之持久化">
+                深入学习Redis之持久化 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -872,7 +872,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">46</span>
+                    <span class="site-state-item-count">50</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -909,7 +909,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -980,7 +984,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">27</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1086,7 +1094,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共字</span>
+  <span class="post-count">博客全站共143.8k字</span>
 </div>
 
         

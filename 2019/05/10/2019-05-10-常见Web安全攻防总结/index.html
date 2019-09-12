@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="安全永远是产品的最基础需求">
+<meta name="keywords" content="安全,Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见 Web 安全攻防总结">
+<meta property="og:url" content="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/index.html">
+<meta property="og:site_name" content="JieSunn - BLOG">
+<meta property="og:description" content="安全永远是产品的最基础需求">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/pic1.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/pic2.jpg">
+<meta property="og:updated_time" content="2019-09-12T03:24:11.502Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见 Web 安全攻防总结">
+<meta name="twitter:description" content="安全永远是产品的最基础需求">
+<meta name="twitter:image" content="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/pic1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>常见 Web 安全攻防总结 | JieSunn - BLOG</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+
+    <div class="headband">
+      <a href="https://github.com/jiesunn" class="github-corner" aria-label="View source on GitHub">
+        <svg width="80" height="80" viewbox="0 0 250 250" style="z-index:999; fill:#FD6C6C; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+          <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/>
+          <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/>
+          <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/>
+        </svg>
+      </a>
+<style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">JieSunn - BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/05/10/2019-05-10-常见Web安全攻防总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JieSunn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="JieSunn - BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">常见 Web 安全攻防总结
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-10 10:46:20" itemprop="dateCreated datePublished" datetime="2019-05-10T10:46:20+08:00">2019-05-10</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><i class="fa fa-quote-left"></i> 安全永远是产品的最基础需求 <i class="fa fa-quote-right"></i></p>
+<a id="more"></a>
+
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Web 安全的对于 Web 从业人员来说是一个非常重要的课题，所以在这里总结一下 Web 相关的安全攻防知识，希望以后不要再踩雷，也希望对看到这篇文章的同学有所帮助。今天这边文章主要的内容就是分析几种常见的攻击的类型以及防御的方法。</p>
+<blockquote>
+<p>也许你对所有的安全问题都有一定的认识，但最主要的还是在编码设计的过程中时刻绷紧安全那根弦，需要反复推敲每个实现细节，安全无小事。<br>本文代码 Demo 都是基于 Node.js 讲解，其他服务端语言同样可以参考。</p>
+</blockquote>
+<h3 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h3><p>首先说下最常见的 XSS 漏洞，XSS (Cross Site Script)，跨站脚本攻击，因为缩写和 CSS (Cascading Style Sheets) 重叠，所以只能叫 XSS。</p>
+<p>XSS 的原理是恶意攻击者往 Web 页面里插入恶意可执行网页脚本代码，当用户浏览该页之时，嵌入其中 Web 里面的脚本代码会被执行，从而可以达到攻击者盗取用户信息或其他侵犯用户安全隐私的目的。XSS 的攻击方式千变万化，但还是可以大致细分为几种类型。</p>
+<h4 id="非持久型-XSS"><a href="#非持久型-XSS" class="headerlink" title="非持久型 XSS"></a>非持久型 XSS</h4><p>非持久型 XSS 漏洞，也叫反射型 XSS 漏洞，一般是通过给别人发送带有恶意脚本代码参数的 URL，当 URL 地址被打开时，特有的恶意代码参数被 HTML 解析、执行。</p>
+<img src="/2019/05/10/2019-05-10-常见Web安全攻防总结/pic1.jpg">
+
+<p>举一个例子，比如你的 Web 页面中包含有以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Select your language:</span><br><span class="line">&lt;select&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        document.write(&apos;&apos;</span><br><span class="line">            + &apos;&lt;option value=1&gt;&apos;</span><br><span class="line">            +     location.href.substring(location.href.indexOf(&apos;default=&apos;) + 8)</span><br><span class="line">            + &apos;&lt;/option&gt;&apos;</span><br><span class="line">        );</span><br><span class="line">        document.write(&apos;&lt;option value=2&gt;English&lt;/option&gt;&apos;);</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<p>攻击者可以直接通过 URL 注入可执行的脚本代码。类似：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://xx.com/xx?default=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>非持久型 XSS 漏洞攻击有以下几点特征：</p>
+<ul>
+<li>即时性，不经过服务器存储，直接通过 HTTP 的 GET 和 POST 请求就能完成一次攻击，拿到用户隐私数据。</li>
+<li>攻击者需要诱骗点击</li>
+<li>反馈率低，所以较难发现和响应修复</li>
+<li>盗取用户敏感保密信息</li>
+</ul>
+<p>为了防止出现非持久型 XSS 漏洞，需要确保这么几件事情：</p>
+<ul>
+<li>Web 页面渲染的所有内容或者渲染的数据都必须来自于服务端。</li>
+<li>尽量不要从 URL，document.referrer，document.forms 等这种 DOM API 中获取数据直接渲染。</li>
+<li>尽量不要使用 eval, new Function()，document.write()，document.writeln()，window.setInterval()，window.setTimeout()，innerHTML，document.creteElement() 等可执行字符串的方法。</li>
+<li>如果做不到以上几点，也必须对涉及 DOM 渲染的方法传入的字符串参数做 escape 转义。</li>
+<li>前端渲染的时候对任何的字段都需要做 escape 转义编码。</li>
+</ul>
+<blockquote>
+<p>escape 转义的目的是将一些构成 HTML 标签的元素转义，比如 <strong>&lt;</strong>，<strong>&gt;</strong>，<strong>空格</strong> 等，转义成 <strong>&amp;lt;</strong>，<strong>&amp;gt</strong>;，<strong>&amp;nbsp;</strong> 等显示转义字符。有很多开源的工具可以协助我们做 escape 转义。</p>
+</blockquote>
+<h4 id="持久型-XSS"><a href="#持久型-XSS" class="headerlink" title="持久型 XSS"></a>持久型 XSS</h4><p>持久型 XSS 漏洞，也被称为存储型 XSS 漏洞，一般存在于 Form 表单提交等交互功能，如发帖留言，提交文本信息等，黑客利用的 XSS 漏洞，将内容经正常功能提交进入数据库持久保存，当前端页面获得后端从数据库中读出的注入代码时，恰好将其渲染执行。</p>
+<p>主要注入页面方式和非持久型 XSS 漏洞类似，只不过持久型的不是来源于 URL，refferer，forms 等，而是来源于后端从数据库中读出来的数据。持久型 XSS 攻击不需要诱骗点击，黑客只需要在提交表单的地方完成注入即可，但是这种 XSS 攻击的成本相对还是很高。攻击成功需要同时满足以下几个条件：</p>
+<ul>
+<li>POST 请求提交表单后端没做转义直接入库。</li>
+<li>后端从数据库中取出数据没做转义直接输出给前端。</li>
+<li>前端拿到后端数据没做转义直接渲染成 DOM。</li>
+</ul>
+<p>持久型 XSS 有以下几个特点：</p>
+<ul>
+<li>持久性，植入在数据库中</li>
+<li>危害面广，甚至可以让用户机器变成 DDoS 攻击的肉鸡。</li>
+<li>盗取用户敏感私密信息</li>
+</ul>
+<p>为了防止持久型 XSS 漏洞，需要前后端共同努力：</p>
+<ul>
+<li>后端在入库前应该选择不相信任何前端数据，将所有的字段统一进行转义处理。</li>
+<li>后端在输出给前端数据统一进行转义处理。</li>
+<li>前端在渲染页面 DOM 的时候应该选择不相信任何后端数据，任何字段都需要做转义处理。</li>
+</ul>
+<h4 id="基于字符集的-XSS"><a href="#基于字符集的-XSS" class="headerlink" title="基于字符集的 XSS"></a>基于字符集的 XSS</h4><p>其实现在很多的浏览器以及各种开源的库都专门针对了 XSS 进行转义处理，尽量默认抵御绝大多数 XSS 攻击，但是还是有很多方式可以绕过转义规则，让人防不胜防。比如「基于字符集的 XSS 攻击」就是绕过这些转义处理的一种攻击方式，比如有些 Web 页面字符集不固定，用户输入非期望字符集的字符，有时会绕过转义过滤规则。</p>
+<p>以基于 utf-7 的 XSS 为例<br>utf-7 是可以将所有的 unicode 通过 7bit 来表示的一种字符集 (但现在已经从 Unicode 规格中移除)。<br>这个字符集为了通过 7bit 来表示所有的文字, 除去数字和一部分的符号,其它的部分将都以 base64 编码为基础的方式呈现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;</span><br><span class="line">可以被解释为：</span><br><span class="line">+ADw-script+AD4-alert(+ACI-xss+ACI-)+ADw-/script+AD4-</span><br></pre></td></tr></table></figure>
+
+<p>可以形成「基于字符集的 XSS 攻击」的原因是由于浏览器在 meta 没有指定 charset 的时候有自动识别编码的机制，所以这类攻击通常就是发生在没有指定或者没来得及指定 meta 标签的 charset 的情况下。</p>
+<p>所以我们有什么办法避免这种 XSS 呢？</p>
+<ul>
+<li>记住指定 <strong>&lt;meta charset=”utf-8”&gt;</strong></li>
+<li>XML 中不仅要指定字符集为 utf-8，而且标签要闭合</li>
+<li>牛文推荐：<a href="http://drops.wooyun.org/papers/1327" target="_blank" rel="noopener">http://drops.wooyun.org/papers/1327</a> （这个讲的很详细）</li>
+</ul>
+<h4 id="基于-Flash-的跨站-XSS"><a href="#基于-Flash-的跨站-XSS" class="headerlink" title="基于 Flash 的跨站 XSS"></a>基于 Flash 的跨站 XSS</h4><p>基于 Flash 的跨站 XSS 也是属于反射型 XSS 的一种，虽然现在开发 ActionScript 的产品线几乎没有了，但还是提一句吧，AS 脚本可以接受用户输入并操作 cookie，攻击者可以配合其他 XSS（持久型或者非持久型）方法将恶意 swf 文件嵌入页面中。主要是因为 AS 有时候需要和 JS 传参交互，攻击者会通过恶意的 XSS 注入篡改参数，窃取并操作cookie。</p>
+<p>避免方法：</p>
+<ul>
+<li>严格管理 cookie 的读写权限</li>
+<li>对 Flash 能接受用户输入的参数进行过滤 escape 转义处理</li>
+</ul>
+<h4 id="未经验证的跳转-XSS"><a href="#未经验证的跳转-XSS" class="headerlink" title="未经验证的跳转 XSS"></a>未经验证的跳转 XSS</h4><p>有一些场景是后端需要对一个传进来的待跳转的 URL 参数进行一个 302 跳转，可能其中会带有一些用户的敏感（cookie）信息。如果服务器端做302 跳转，跳转的地址来自用户的输入，攻击者可以输入一个恶意的跳转地址来执行脚本。</p>
+<p>这时候需要通过以下方式来防止这类漏洞：</p>
+<ul>
+<li>对待跳转的 URL 参数做白名单或者某种规则过滤</li>
+<li>后端注意对敏感信息的保护, 比如 cookie 使用来源验证。</li>
+</ul>
+<h3 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h3><p>CSRF（Cross-Site Request Forgery），中文名称：跨站请求伪造攻击</p>
+<p>那么 CSRF 到底能够干嘛呢？你可以这样简单的理解：攻击者可以盗用你的登陆信息，以你的身份模拟发送各种请求。攻击者只要借助少许的社会工程学的诡计，例如通过 QQ 等聊天软件发送的链接(有些还伪装成短域名，用户无法分辨)，攻击者就能迫使 Web 应用的用户去执行攻击者预设的操作。例如，当用户登录网络银行去查看其存款余额，在他没有退出时，就点击了一个 QQ 好友发来的链接，那么该用户银行帐户中的资金就有可能被转移到攻击者指定的帐户中。</p>
+<p>所以遇到 CSRF 攻击时，将对终端用户的数据和操作指令构成严重的威胁。当受攻击的终端用户具有管理员帐户的时候，CSRF 攻击将危及整个 Web 应用程序。</p>
+<h4 id="CSRF-原理"><a href="#CSRF-原理" class="headerlink" title="CSRF 原理"></a>CSRF 原理</h4><p>下图大概描述了 CSRF 攻击的原理，可以理解为有一个小偷在你配钥匙的地方得到了你家的钥匙，然后拿着要是去你家想偷什么偷什么。</p>
+<img src="/2019/05/10/2019-05-10-常见Web安全攻防总结/pic2.jpg">
+
+<p>完成 CSRF 攻击必须要有三个条件：</p>
+<ul>
+<li>用户已经登录了站点 A，并在本地记录了 cookie</li>
+<li>在用户没有登出站点 A 的情况下（也就是 cookie 生效的情况下），访问了恶意攻击者提供的引诱危险站点 B (B 站点要求访问站点A)。</li>
+<li>站点 A 没有做任何 CSRF 防御</li>
+</ul>
+<p>你也许会问：「如果我不满足以上三个条件中的任意一个，就不会受到 CSRF 的攻击」。其实可以这么说的，但你不能保证以下情况不会发生：</p>
+<ul>
+<li>你不能保证你登录了一个网站后，不再打开一个 tab 页面并访问另外的网站，特别现在浏览器都是支持多 tab 的。</li>
+<li>你不能保证你关闭浏览器了后，你本地的 cookie 立刻过期，你上次的会话已经结束。</li>
+<li>上图中所谓的攻击网站 B，可能是一个存在其他漏洞的可信任的经常被人访问的网站。</li>
+</ul>
+<h4 id="预防-CSRF"><a href="#预防-CSRF" class="headerlink" title="预防 CSRF"></a>预防 CSRF</h4><p>CSRF 的防御可以从服务端和客户端两方面着手，防御效果是从服务端着手效果比较好，现在一般的 CSRF 防御也都在服务端进行。服务端的预防 CSRF 攻击的方式方法有多种，但思路上都是差不多的，主要从以下两个方面入手：</p>
+<ul>
+<li>正确使用 GET，POST 请求和 cookie</li>
+<li>在非 GET 请求中增加 token</li>
+</ul>
+<p>一般而言，普通的 Web 应用都是以 GET、POST 请求为主，还有一种请求是 cookie 方式。我们一般都是按照如下规则设计应用的请求：</p>
+<ul>
+<li>GET 请求常用在查看，列举，展示等不需要改变资源属性的时候（数据库 query 查询的时候）</li>
+<li>POST 请求常用在 From 表单提交，改变一个资源的属性或者做其他一些事情的时候（数据库有 insert、update、delete 的时候）</li>
+</ul>
+<p>当正确的使用了 GET 和 POST 请求之后，剩下的就是在非 GET 方式的请求中增加随机数，这个大概有三种方式来进行：</p>
+<ul>
+<li><strong>为每个用户生成一个唯一的 cookie token</strong>，所有表单都包含同一个伪随机值，这种方案最简单，因为攻击者不能获得第三方的 cookie(理论上)，所以表单中的数据也就构造失败，但是由于用户的 cookie 很容易由于网站的 XSS 漏洞而被盗取，所以这个方案必须要在没有 XSS 的情况下才安全。</li>
+<li><strong>每个 POST 请求使用验证码</strong>，这个方案算是比较完美的，但是需要用户多次输入验证码，用户体验比较差，所以不适合在业务中大量运用。</li>
+<li><strong>渲染表单的时候，为每一个表单包含一个 csrfToken</strong>，提交表单的时候，带上 csrfToken，然后在后端做 csrfToken 验证。</li>
+</ul>
+<p>CSRF 的防御可以根据应用场景的不同自行选择。CSRF 的防御工作确实会在正常业务逻辑的基础上带来很多额外的开发量，但是这种工作量是值得的，毕竟用户隐私以及财产安全是产品最基础的根本。</p>
+<h3 id="SQL-注入"><a href="#SQL-注入" class="headerlink" title="SQL 注入"></a>SQL 注入</h3><p>SQL 注入漏洞（SQL Injection）是 Web 开发中最常见的一种安全漏洞。可以用它来从数据库获取敏感信息，或者利用数据库的特性执行添加用户，导出文件等一系列恶意操作，甚至有可能获取数据库乃至系统用户最高权限。</p>
+<p>而造成 SQL 注入的原因是因为程序没有有效的转义过滤用户的输入，使攻击者成功的向服务器提交恶意的 SQL 查询代码，程序在接收后错误的将攻击者的输入作为查询语句的一部分执行，导致原始的查询逻辑被改变，额外的执行了攻击者精心构造的恶意代码。</p>
+<p>很多 Web 开发者没有意识到 SQL 查询是可以被篡改的，从而把 SQL 查询当作可信任的命令。殊不知，SQL 查询是可以绕开访问控制，从而绕过身份验证和权限检查的。更有甚者，有可能通过 SQL 查询去运行主机系统级的命令。</p>
+<h4 id="SQL-注入原理"><a href="#SQL-注入原理" class="headerlink" title="SQL 注入原理"></a>SQL 注入原理</h4><p>下面将通过一些真实的例子来详细讲解 SQL 注入的方式的原理。</p>
+<p>考虑以下简单的管理员登录表单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=&quot;/login&quot; method=&quot;POST&quot;&gt;</span><br><span class="line">    &lt;p&gt;Username: &lt;input type=&quot;text&quot; name=&quot;username&quot; /&gt;&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;Password: &lt;input type=&quot;password&quot; name=&quot;password&quot; /&gt;&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;登陆&quot; /&gt;&lt;/p&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>后端的 SQL 语句可能是如下这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">let querySQL = `</span><br><span class="line">    SELECT *</span><br><span class="line">    FROM user</span><br><span class="line">    WHERE username=&apos;$&#123;username&#125;&apos;</span><br><span class="line">    AND psw=&apos;$&#123;password&#125;&apos;</span><br><span class="line">`;</span><br><span class="line">// 接下来就是执行 sql 语句...</span><br></pre></td></tr></table></figure>
+
+<p>目的就是来验证用户名和密码是不是正确，按理说乍一看上面的 SQL 语句也没什么毛病，确实是能够达到我们的目的，可是你只是站在用户会老老实实按照你的设计来输入的角度来看问题，如果有一个恶意攻击者输入的用户名是 <strong>zoumiaojiang’ OR 1 = 1 –</strong>，密码随意输入，就可以直接登入系统了。WFT!</p>
+<p>冷静下来思考一下，我们之前预想的真实 SQL 语句是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM user WHERE username=&apos;zoumiaojiang&apos; AND psw=&apos;mypassword&apos;</span><br></pre></td></tr></table></figure>
+
+<p>可以恶意攻击者的奇怪用户名将你的 SQL 语句变成了如下形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM user WHERE username=&apos;zoumiaojiang&apos; OR 1 = 1 --&apos; AND psw=&apos;xxxx&apos;</span><br></pre></td></tr></table></figure>
+
+<p>在 SQL 中，– 是注释后面的内容的意思，所以查询语句就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM user WHERE username=&apos;zoumiaojiang&apos; OR 1 = 1</span><br></pre></td></tr></table></figure>
+
+<p>这条 SQL 语句的查询条件永远为真，所以意思就是恶意攻击者不用我的密码，就可以登录进我的账号，然后可以在里面为所欲为，然而这还只是最简单的注入，牛逼的 SQL 注入高手甚至可以通过 SQL 查询去运行主机系统级的命令，将你主机里的内容一览无余，这里我也没有这个能力讲解的太深入，毕竟不是专业研究这类攻击的，但是通过以上的例子，已经了解了 SQL 注入的原理，我们基本已经能找到防御 SQL 注入的方案了。</p>
+<h4 id="如何预防-SQL-注入"><a href="#如何预防-SQL-注入" class="headerlink" title="如何预防 SQL 注入"></a>如何预防 SQL 注入</h4><p>防止 SQL 注入主要是不能允许用户输入的内容影响正常的 SQL 语句的逻辑，当用户的输入信心将要用来拼接 SQL 语句的话，我们应该永远选择不相信，任何内容都必须进行转义过滤，当然做到这个还是不够的，下面列出防御 SQL 注入的几点注意事项：</p>
+<ul>
+<li>严格限制Web应用的数据库的操作权限，给此用户提供仅仅能够满足其工作的最低权限，从而最大限度的减少注入攻击对数据库的危害</li>
+<li>后端代码检查输入的数据是否符合预期，严格限制变量的类型，例如使用正则表达式进行一些匹配处理。</li>
+<li>对进入数据库的特殊字符（<strong>‘</strong>，<strong>“</strong>，<strong>\</strong>，<strong>&lt;</strong>，<strong>&gt;</strong>，<strong>&amp;</strong>，<strong>*</strong>，<strong>;</strong> 等）进行转义处理，或编码转换。基本上所有的后端语言都有对字符串进行转义处理的方法，比如 lodash 的 <strong>lodash._escapehtmlchar</strong> 库。</li>
+<li>所有的查询语句建议使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中，即不要直接拼接 SQL 语句。例如 Node.js 中的 mysqljs 库的 <strong>query</strong> 方法中的 <strong>?</strong> 占位参数。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql.query(`SELECT * FROM user WHERE username = ? AND psw = ?`, [username, psw]);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>在应用发布之前建议使用专业的 SQL 注入检测工具进行检测</strong>，以及时修补被发现的 SQL 注入漏洞。网上有很多这方面的开源工具，例如 sqlmap、SQLninja 等。</li>
+<li><strong>避免网站打印出 SQL 错误信息</strong>，比如类型错误、字段不匹配等，把代码里的 SQL 语句暴露出来，以防止攻击者利用这些错误信息进行 SQL 注入。</li>
+<li><strong>不要过于细化返回的错误信息</strong>，如果目的是方便调试，就去使用后端日志，不要在接口上过多的暴露出错信息，毕竟真正的用户不关心太多的技术细节，只要话术合理就行。</li>
+</ul>
+<p>碰到要操作的数据库的代码，一定要慎重，小心使得万年船，多找几个人多来几次 code review，将问题都暴露出来，而且要善于利用工具，操作数据库相关的代码属于机密，没事不要去各种论坛晒自家站点的 SQL 语句，万一被人盯上了呢？</p>
+<h3 id="命令行注入"><a href="#命令行注入" class="headerlink" title="命令行注入"></a>命令行注入</h3><p>命令行注入漏洞，指的是攻击者能够通过 HTTP 请求直接侵入主机，执行攻击者预设的 shell 命令，听起来好像匪夷所思，这往往是 Web 开发者最容易忽视但是却是最危险的一个漏洞之一，看一个实例：</p>
+<p>假如现在需要实现一个需求：用户提交一些内容到服务器，然后在服务器执行一些系统命令去产出一个结果返回给用户，接口的部分实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 以 Node.js 为例，假如在接口中需要从 github 下载用户指定的 repo</span><br><span class="line">const exec = require(&apos;mz/child_process&apos;).exec;</span><br><span class="line">let params = &#123;/* 用户输入的参数 */&#125;;</span><br><span class="line"></span><br><span class="line">exec(`git clone $&#123;params.repo&#125; /some/path`);</span><br></pre></td></tr></table></figure>
+
+<p>这段代码确实能够满足业务需求，正常的用户也确实能从指定的 git repo 上下载到想要的代码，可是和 SQL 注入一样，这段代码在恶意攻击者眼中，简直就是香饽饽。</p>
+<p>如果 <strong>params.repo</strong> 传入的是 <strong><a href="https://github.com/zoumiaojiang/zoumiaojiang.github.io.git" target="_blank" rel="noopener">https://github.com/zoumiaojiang/zoumiaojiang.github.io.git</a></strong> 当然没问题了。<br>可是如果 params.repo 传入的是 <strong><a href="https://github.com/xx/xx.git" target="_blank" rel="noopener">https://github.com/xx/xx.git</a> &amp;&amp; rm -rf /* &amp;&amp;</strong> 恰好你的服务是用 root 权限起的就惨了。</p>
+<p>具体恶意攻击者能用命令行注入干什么也像 SQL 注入一样，手法是千变万化的，比如「<a href="https://wiki.bash-hackers.org/howto/redirection_tutorial" target="_blank" rel="noopener">反弹 shell 注入</a>」等，但原理都是一样的，我们绝对有能力防止命令行注入发生。防止命令行注入需要做到以下几件事情：</p>
+<ul>
+<li>后端对前端提交内容需要完全选择不相信，并且对其进行规则限制（比如正则表达式）。</li>
+<li>在调用系统命令前对所有传入参数进行命令行参数转义过滤。</li>
+<li>不要直接拼接命令语句，借助一些工具做拼接、转义预处理，例如 Node.js 的 shell-escape npm 包。</li>
+</ul>
+<p>还是前面的例子，我们可以做到如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const exec = require(&apos;mz/child_process&apos;).exec;</span><br><span class="line"></span><br><span class="line">// 借助 shell-escape npm 包解决参数转义过滤问题</span><br><span class="line">const shellescape = require(&apos;shell-escape&apos;);</span><br><span class="line"></span><br><span class="line">let params = &#123;/* 用户输入的参数 */&#125;;</span><br><span class="line"></span><br><span class="line">// 先过滤一下参数，让参数符合预期</span><br><span class="line">if (!/正确的表达式/.test(params.repo)) &#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">let cmd = shellescape([</span><br><span class="line">    &apos;git&apos;,</span><br><span class="line">    &apos;clone&apos;,</span><br><span class="line">    params.repo,</span><br><span class="line">    &apos;/some/path&apos;</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line">// cmd 的值: git clone &apos;https://github.com/xx/xx.git &amp;&amp; rm -rf / &amp;&amp;&apos; /some/path</span><br><span class="line">// 这样就不会被注入成功了。</span><br><span class="line">exec(cmd);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>无论是在何种后端语言环境中，凡是涉及到代码调用系统 shell 命令的时候都一定要谨慎。</p>
+</blockquote>
+<h3 id="DDoS-攻击"><a href="#DDoS-攻击" class="headerlink" title="DDoS 攻击"></a>DDoS 攻击</h3><p>DDoS 又叫分布式拒绝服务，全称 Distributed Denial of Service，其原理就是利用大量的请求造成资源过载，导致服务不可用，这个攻击应该不能算是安全问题，这应该算是一个另类的存在，因为这种攻击根本就是耍流氓的存在，「伤敌一千，自损八百」的行为。出于保护 Web App 不受攻击的攻防角度，还是介绍一下 DDoS 攻击吧，毕竟也是挺常见的。</p>
+<p>DDoS 攻击可以理解为：「你开了一家店，隔壁家点看不惯，就雇了一大堆黑社会人员进你店里干坐着，也不消费，其他客人也进不来，导致你营业惨淡」。为啥说 DDoS 是个「伤敌一千，自损八百」的行为呢？毕竟隔壁店还是花了不少钱雇黑社会但是啥也没得到不是？DDoS 攻击的目的基本上就以下几个：</p>
+<ul>
+<li>深仇大恨，就是要干死你</li>
+<li>敲诈你，不给钱就干你</li>
+<li>忽悠你，不买我防火墙服务就会有“人”继续干你</li>
+</ul>
+<p>也许你的站点遭受过 DDoS 攻击，具体什么原因怎么解读见仁见智。DDos 攻击从层次上可分为网络层攻击与应用层攻击，从攻击手法上可分为快型流量攻击与慢型流量攻击，但其原理都是造成资源过载，导致服务不可用。</p>
+<h4 id="网络层-DDoS"><a href="#网络层-DDoS" class="headerlink" title="网络层 DDoS"></a>网络层 DDoS</h4><p>网络层 DDos 攻击包括 <strong>SYN Flood</strong>、<strong>ACK Flood</strong>、<strong>UDP Flood</strong>、<strong>ICMP Flood</strong> 等。</p>
+<h5 id="SYN-Flood-攻击"><a href="#SYN-Flood-攻击" class="headerlink" title="SYN Flood 攻击"></a>SYN Flood 攻击</h5><p>SYN flood 攻击主要利用了 TCP 三次握手过程中的 Bug，我们都知道 TCP 三次握手过程是要建立连接的双方发送 SYN，SYN + ACK，ACK 数据包，而当攻击方随意构造源 IP 去发送 SYN 包时，服务器返回的 SYN + ACK 就不能得到应答（因为 IP 是随意构造的），此时服务器就会尝试重新发送，并且会有至少 30s 的等待时间，导致资源饱和服务不可用，此攻击属于慢型 DDoS 攻击。</p>
+<h5 id="ACK-Flood-攻击"><a href="#ACK-Flood-攻击" class="headerlink" title="ACK Flood 攻击"></a>ACK Flood 攻击</h5><p>ACK Flood 攻击是在 TCP 连接建立之后，所有的数据传输 TCP 报文都是带有 ACK 标志位的，主机在接收到一个带有 ACK 标志位的数据包的时候，需要检查该数据包所表示的连接四元组是否存在，如果存在则检查该数据包所表示的状态是否合法，然后再向应用层传递该数据包。如果在检查中发现该数据包不合法，例如该数据包所指向的目的端口在本机并未开放，则主机操作系统协议栈会回应 RST 包告诉对方此端口不存在。</p>
+<h5 id="UDP-Flood-攻击"><a href="#UDP-Flood-攻击" class="headerlink" title="UDP Flood 攻击"></a>UDP Flood 攻击</h5><p>UDP flood 攻击是由于 UDP 是一种无连接的协议，因此攻击者可以伪造大量的源 IP 地址去发送 UDP 包，此种攻击属于大流量攻击。正常应用情况下，UDP 包双向流量会基本相等，因此发起这种攻击的攻击者在消耗对方资源的时候也在消耗自己的资源。</p>
+<h5 id="ICMP-Flood-攻击"><a href="#ICMP-Flood-攻击" class="headerlink" title="ICMP Flood 攻击"></a>ICMP Flood 攻击</h5><p>ICMP Flood 攻击属于大流量攻击，其原理就是不断发送不正常的 ICMP 包（所谓不正常就是 ICMP 包内容很大），导致目标带宽被占用，但其本身资源也会被消耗。目前很多服务器都是禁 ping 的（在防火墙在可以屏蔽 ICMP 包），因此这种攻击方式已经落伍。</p>
+<h4 id="网络层-DDoS-防御"><a href="#网络层-DDoS-防御" class="headerlink" title="网络层 DDoS 防御"></a>网络层 DDoS 防御</h4><p>网络层的 DDoS 攻击究其本质其实是无法防御的，我们能做得就是不断优化服务本身部署的网络架构，以及提升网络带宽。当然，还是做好以下几件事也是有助于缓解网络层 DDoS 攻击的冲击：</p>
+<ul>
+<li>网络架构上做好优化，采用负载均衡分流。</li>
+<li>确保服务器的系统文件是最新的版本，并及时更新系统补丁。</li>
+<li>添加抗 DDos 设备，进行流量清洗。</li>
+<li>限制同时打开的 SYN 半连接数目，缩短 SYN 半连接的 Timeout 时间。</li>
+<li>限制单 IP 请求频率。</li>
+<li>防火墙等防护设置禁止 ICMP 包等。</li>
+<li>严格限制对外开放的服务器的向外访问。</li>
+<li>运行端口映射程序或端口扫描程序，要认真检查特权端口和非特权端口。</li>
+<li>关闭不必要的服务。</li>
+<li>认真检查网络设备和主机/服务器系统的日志。只要日志出现漏洞或是时间变更,那这台机器就可能遭到了攻击。</li>
+<li>限制在防火墙外与网络文件共享。这样会给黑客截取系统文件的机会，主机的信息暴露给黑客，无疑是给了对方入侵的机会。</li>
+<li>加钱堆机器。。</li>
+<li>报警。。</li>
+</ul>
+<h4 id="应用层-DDoS"><a href="#应用层-DDoS" class="headerlink" title="应用层 DDoS"></a>应用层 DDoS</h4><p>应用层 DDoS 攻击不是发生在网络层，是发生在 TCP 建立握手成功之后，应用程序处理请求的时候，现在很多常见的 DDoS 攻击都是应用层攻击。应用层攻击千变万化，目的就是在网络应用曾耗尽你的带宽，下面列出集中典型的攻击类型。</p>
+<h5 id="CC-攻击"><a href="#CC-攻击" class="headerlink" title="CC 攻击"></a>CC 攻击</h5><p>当时绿盟为了防御 DDoS 攻击研发了一款叫做 <strong>Collapasar</strong> 的产品，能够有效的防御 SYN Flood 攻击。黑客为了挑衅，研发了一款 <strong>Challenge Collapasar</strong> 攻击工具（简称 CC）。</p>
+<p>CC 攻击的原理，就是针对消耗资源比较大的页面不断发起不正常的请求，导致资源耗尽。因此在发送 CC 攻击前，我们需要寻找加载比较慢，消耗资源比较多的网页，比如需要查询数据库的页面、读写硬盘文件的等。通过 CC 攻击，使用爬虫对某些加载需要消耗大量资源的页面发起 HTTP 请求。</p>
+<h5 id="DNS-Flood"><a href="#DNS-Flood" class="headerlink" title="DNS Flood"></a>DNS Flood</h5><p>DNS Flood 攻击采用的方法是向被攻击的服务器发送大量的域名解析请求，通常请求解析的域名是随机生成或者是网络世界上根本不存在的域名，被攻击的DNS 服务器在接收到域名解析请求的时候首先会在服务器上查找是否有对应的缓存，如果查找不到并且该域名无法直接由服务器解析的时候，DNS 服务器会向其上层 DNS 服务器递归查询域名信息。域名解析的过程给服务器带来了很大的负载，每秒钟域名解析请求超过一定的数量就会造成 DNS 服务器解析域名超时。</p>
+<p>根据微软的统计数据，一台 DNS 服务器所能承受的动态域名查询的上限是每秒钟 9000 个请求。而我们知道，在一台 P3 的 PC 机上可以轻易地构造出每秒钟几万个域名解析请求，足以使一台硬件配置极高的 DNS 服务器瘫痪，由此可见 DNS 服务器的脆弱性。</p>
+<h5 id="HTTP-慢速连接攻击"><a href="#HTTP-慢速连接攻击" class="headerlink" title="HTTP 慢速连接攻击"></a>HTTP 慢速连接攻击</h5><p>针对 HTTP 协议，先建立起 HTTP 连接，设置一个较大的 Conetnt-Length，每次只发送很少的字节，让服务器一直以为 HTTP 头部没有传输完成，这样连接一多就很快会出现连接耗尽。</p>
+<h4 id="应用层-DDoS-防御"><a href="#应用层-DDoS-防御" class="headerlink" title="应用层 DDoS 防御"></a>应用层 DDoS 防御</h4><ul>
+<li>判断 User-Agent 字段（不可靠，因为可以随意构造）</li>
+<li>针对 IP + cookie，限制访问频率（由于 cookie 可以更改，IP 可以使用代理，或者肉鸡，也不可靠)</li>
+<li>关闭服务器最大连接数等，合理配置中间件，缓解 DDoS 攻击。</li>
+<li>请求中添加验证码，比如请求中有数据库操作的时候。</li>
+<li>编写代码时，尽量实现优化，并合理使用缓存技术，减少数据库的读取操作。</li>
+<li>加钱堆机器。。</li>
+<li>报警。。</li>
+</ul>
+<p>应用层的防御有时比网络层的更难，因为导致应用层被 DDoS 攻击的因素非常多，有时往往是因为程序员的失误，导致某个页面加载需要消耗大量资源，有时是因为中间件配置不当等等。而应用层 DDoS 防御的核心就是区分人与机器（爬虫），因为大量的请求不可能是人为的，肯定是机器构造的。因此如果能有效的区分人与爬虫行为，则可以很好地防御此攻击。</p>
+<h4 id="其他-DDoS-攻击"><a href="#其他-DDoS-攻击" class="headerlink" title="其他 DDoS 攻击"></a>其他 DDoS 攻击</h4><p>发起 DDoS 也是需要大量的带宽资源的，但是互联网就像森林，林子大了什么鸟都有，DDoS 攻击者也能找到其他的方式发起廉价并且极具杀伤力的 DDoS 攻击。</p>
+<h5 id="利用-XSS"><a href="#利用-XSS" class="headerlink" title="利用 XSS"></a>利用 XSS</h5><p>举个例子，如果 12306 页面有一个 XSS 持久型漏洞被恶意攻击者发现，只需在春节抢票期间在这个漏洞中执行脚本使得往某一个小站点随便发点什么请求，然后随着用户访问的增多，感染用户增多，被攻击的站点自然就会迅速瘫痪了。这种 DDoS 简直就是无本万利，不用惊讶，现在大站有 XSS 漏洞的不要太多。</p>
+<h5 id="来自-P2P-网络攻击"><a href="#来自-P2P-网络攻击" class="headerlink" title="来自 P2P 网络攻击"></a>来自 P2P 网络攻击</h5><p>大家都知道，互联网上的 P2P 用户和流量都是一个极为庞大的数字。如果他们都去一个指定的地方下载数据，成千上万的真实 IP 地址连接过来，没有哪个设备能够支撑住。拿 BT 下载来说，伪造一些热门视频的种子，发布到搜索引擎，就足以骗到许多用户和流量了，但是这只是基础攻击。<br>高级的 P2P 攻击，是直接欺骗资源管理服务器。如迅雷客户端会把自己发现的资源上传到资源管理服务器，然后推送给其它需要下载相同资源的用户，这样，一个链接就发布出去。通过协议逆向，攻击者伪造出大批量的热门资源信息通过资源管理中心分发出去，瞬间就可以传遍整个 P2P 网络。更为恐怖的是，这种攻击是无法停止的，即使是攻击者自身也无法停止，攻击一直持续到 P2P 官方发现问题更新服务器且下载用户重启下载软件为止。</p>
+<blockquote>
+<p>最后总结下，DDoS 不可能防的住，就好比你的店只能容纳 50 人，黑社会有 100 人，你就换一家大店，能容纳 500 人，然后黑社会又找来了 1000 人，这种堆人头的做法就是 DDoS 本质上的攻防之道，「道高一尺，魔高一丈，魔高一尺，道高一丈」，讲真，必要的时候就答应勒索你的人的条件吧，实在不行就报警吧。</p>
+</blockquote>
+<h3 id="流量劫持"><a href="#流量劫持" class="headerlink" title="流量劫持"></a>流量劫持</h3><p>流量劫持应该算是黑产行业的一大经济支柱了吧？简直是让人恶心到吐，不吐槽了，还是继续谈干货吧，流量劫持基本分两种：DNS 劫持 和 HTTP 劫持，目的都是一样的，就是当用户访问 zoumiaojiang.com 的时候，给你展示的并不是或者不完全是 zoumiaojiang.com 提供的 “内容”。</p>
+<h4 id="DNS-劫持"><a href="#DNS-劫持" class="headerlink" title="DNS 劫持"></a>DNS 劫持</h4><p>DNS 劫持，也叫做域名劫持，可以这么理解，「你打了一辆车想去商场吃饭，结果你打的车是小作坊派来的，直接给你拉到小作坊去了」，DNS 的作用是把网络地址域名对应到真实的计算机能够识别的 IP 地址，以便计算机能够进一步通信，传递网址和内容等。如果当用户通过某一个域名访问一个站点的时候，被篡改的 DNS 服务器返回的是一个恶意的钓鱼站点的 IP，用户就被劫持到了恶意钓鱼站点，然后继而会被钓鱼输入各种账号密码信息，泄漏隐私。</p>
+
+
+<p>这类劫持，要不就是网络运营商搞的鬼，一般小的网络运营商与黑产勾结会劫持 DNS，要不就是电脑中毒，被恶意篡改了路由器的 DNS 配置，基本上做为开发者或站长却是很难察觉的，除非有用户反馈，现在升级版的 DNS 劫持还可以对特定用户、特定区域等使用了用户画像进行筛选用户劫持的办法，另外这类广告显示更加随机更小，一般站长除非用户投诉否则很难觉察到，就算觉察到了取证举报更难。无论如何，如果接到有 DNS 劫持的反馈，一定要做好以下几件事：</p>
+<ul>
+<li>取证很重要，时间、地点、IP、拨号账户、截屏、URL 地址等一定要有。</li>
+<li>可以跟劫持区域的电信运营商进行投诉反馈。</li>
+<li>如果投诉反馈无效，直接去工信部投诉，一般来说会加白你的域名。</li>
+</ul>
+<h4 id="HTTP-劫持"><a href="#HTTP-劫持" class="headerlink" title="HTTP 劫持"></a>HTTP 劫持</h4><p>HTTP 劫持您可以这么理解，「<strong>你打了一辆车想去商场吃饭，结果司机跟你一路给你递小作坊的广告</strong>」，HTTP 劫持主要是当用户访问某个站点的时候会经过运营商网络，而不法运营商和黑产勾结能够截获 HTTP 请求返回内容，并且能够篡改内容，然后再返回给用户，从而实现劫持页面，轻则插入小广告，重则直接篡改成钓鱼网站页面骗用户隐私。能够实施流量劫持的根本原因，是 HTTP 协议没有办法对通信对方的身份进行校验以及对数据完整性进行校验。如果能解决这个问题，则流量劫持将无法轻易发生。所以防止 HTTP 劫持的方法只有将内容加密，让劫持者无法破解篡改，这样就可以防止 HTTP 劫持了。</p>
+<p>HTTPS 协议就是一种基于 SSL 协议的安全加密网络应用层协议，可以很好的防止 HTTP 劫持。这里有篇 文章 讲的不错。HTTPS 在这就不深讲了，后面有机会我会单独好好讲讲 HTTPS。如果不想站点被 HTTP 劫持，赶紧将你的站点全站改造成 HTTPS 吧。</p>
+<h3 id="服务器漏洞"><a href="#服务器漏洞" class="headerlink" title="服务器漏洞"></a>服务器漏洞</h3><p>服务器除了以上提到的那些大名鼎鼎的漏洞和臭名昭著的攻击以外，其实还有很多其他的漏洞，往往也很容易被忽视，在这个小节也稍微介绍几种。</p>
+<h4 id="越权操作漏洞"><a href="#越权操作漏洞" class="headerlink" title="越权操作漏洞"></a>越权操作漏洞</h4><p>如果你的系统是有登录控制的，那就要格外小心了，因为很有可能你的系统越权操作漏洞，越权操作漏洞可以简单的总结为 「A 用户能看到或者操作 B 用户的隐私内容」，如果你的系统中还有权限控制就更加需要小心了。所以每一个请求都需要做 userid 的判断</p>
+<p>以下是一段有漏洞的后端示意代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// ctx 为请求的 context 上下文</span><br><span class="line">let msgId = ctx.params.msgId;</span><br><span class="line"></span><br><span class="line">mysql.query(</span><br><span class="line">    &apos;SELECT * FROM msg_table WHERE msg_id = ?&apos;,</span><br><span class="line">    [msgId]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>以上代码是任何人都可以查询到任何用户的消息，只要有 msg_id 就可以，这就是比较典型的越权漏洞，需要如下这么改进一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ctx 为请求的 context 上下文</span><br><span class="line">let msgId = ctx.params.msgId;</span><br><span class="line">let userId = ctx.session.userId; // 从会话中取出当前登陆的 userId</span><br><span class="line"></span><br><span class="line">mysql.query(</span><br><span class="line">    &apos;SELECT * FROM msg_table WHERE msg_id = ? AND user_id = ?&apos;,</span><br><span class="line">    [msgId, userId]</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>嗯，大概就是这个意思，如果有更严格的权限控制，那在每个请求中凡是涉及到数据库的操作都需要先进行严格的验证，并且在设计数据库表的时候需要考虑进 userId 的账号关联以及权限关联。</p>
+<h4 id="目录遍历漏洞"><a href="#目录遍历漏洞" class="headerlink" title="目录遍历漏洞"></a>目录遍历漏洞</h4><p>目录遍历漏洞指通过在 URL 或参数中构造 <strong>../</strong>，<strong>./</strong> 和类似的跨父目录字符串的 ASCII 编码、unicode 编码等，完成目录跳转，读取操作系统各个目录下的敏感文件，也可以称作「任意文件读取漏洞」。</p>
+<p>目录遍历漏洞原理：程序没有充分过滤用户输入的 <strong>../</strong> 之类的目录跳转符，导致用户可以通过提交目录跳转来遍历服务器上的任意文件。使用多个 <strong>..</strong> 符号，不断向上跳转，最终停留在根 <strong>/</strong>，通过绝对路径去读取任意文件。</p>
+<p>目录遍历漏洞几个示例和测试，一般构造 URL 然后使用浏览器直接访问，或者使用 Web 漏洞扫描工具检测，当然也可以自写程序测试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http://somehost.com/../../../../../../../../../etc/passwd</span><br><span class="line">http://somehost.com/some/path?file=../../Windows/system.ini</span><br><span class="line"></span><br><span class="line"># 借助 %00 空字符截断是一个比较经典的攻击手法</span><br><span class="line">http://somehost.com/some/path?file=../../Windows/system.ini%00.js</span><br><span class="line"></span><br><span class="line"># 使用了 IIS 的脚本目录来移动目录并执行指令</span><br><span class="line">http://somehost.com/scripts/..%5c../Windows/System32/cmd.exe?/c+dir+c:\</span><br></pre></td></tr></table></figure>
+
+<p><strong>防御</strong> 方法就是需要对 URL 或者参数进行 <strong>../</strong>，<strong>./</strong> 等字符的转义过滤</p>
+<h4 id="物理路径泄漏"><a href="#物理路径泄漏" class="headerlink" title="物理路径泄漏"></a>物理路径泄漏</h4><p>物理路径泄露属于低风险等级缺陷，它的危害一般被描述为「攻击者可以利用此漏洞得到信息，来对系统进一步地攻击」，通常都是系统报错 500 的错误信息直接返回到页面可见导致的漏洞。得到物理路径有些时候它能给攻击者带来一些有用的信息，比如说：可以大致了解系统的文件目录结构；可以看出系统所使用的第三方软件；也说不定会得到一个合法的用户名（因为很多人把自己的用户名作为网站的目录名）。</p>
+<p>防止这种泄漏的方法就是做好后端程序的出错处理，定制特殊的 500 报错页面。</p>
+<h4 id="源码暴露漏洞"><a href="#源码暴露漏洞" class="headerlink" title="源码暴露漏洞"></a>源码暴露漏洞</h4><p>和物理路径泄露类似，就是攻击者可以通过请求直接获取到你站点的后端源代码，然后就可以对系统进一步研究攻击。那么导致源代码暴露的原因是什么呢？基本上就是发生在服务器配置上了，服务器可以设置哪些路径的文件才可以被直接访问的，这里给一个 koa 服务起的例子，正常的 koa 服务器可以通过 koa-static 中间件去指定静态资源的目录，好让静态资源可以通过路径的路由访问。比如你的系统源代码目录是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">|- project</span><br><span class="line">    |- src</span><br><span class="line">    |- static</span><br><span class="line">    |- ...</span><br><span class="line">|- server.js</span><br></pre></td></tr></table></figure>
+
+<p>你想要将 static 的文件夹配成静态资源目录，你应该会在 <strong>server.js</strong> 做如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const Koa = require(&apos;koa&apos;);</span><br><span class="line">const serve = require(&apos;koa-static&apos;);</span><br><span class="line">const app = new Koa();</span><br><span class="line"></span><br><span class="line">app.use(serve(__dirname + &apos;/project/static&apos;));</span><br></pre></td></tr></table></figure>
+
+<p>但是如果配错了静态资源的目录，可能就出大事了，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// ...</span><br><span class="line">app.use(serve(__dirname + &apos;/project&apos;));</span><br></pre></td></tr></table></figure>
+
+<p>这样所有的源代码都可以通过路由访问到了，所有的服务器都提供了静态资源机制，所以在通过服务器配置静态资源目录和路径的时候，一定要注意检验，不然很可能产生漏洞。</p>
+<p>最后，希望 Web 开发者们能够管理好自己的代码隐私，注意代码安全问题，比如不要将产品的含有敏感信息的代码放到第三方外部站点或者暴露给外部用户，尤其是前端代码，私钥类似的保密性的东西不要直接输出在代码里或者页面中。也许还有很多值得注意的点，但是归根结底还是绷住安全那根弦，对待每一行代码都要多多推敲。</p>
+
+      
+    </div>
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/安全/" rel="tag"><i class="fa fa-tag">安全</i></a>
+          
+            <a href="/tags/Web/" rel="tag"><i class="fa fa-tag">Web</i></a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/15/2019-04-15-MySQL优化之index_merge/" rel="next" title="MySQL优化之index_merge">
+                <i class="fa fa-chevron-left"></i> MySQL优化之index_merge
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/10/2019-07-10-分布式锁/" rel="prev" title="分布式锁">
+                分布式锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="JieSunn">
+            
+              <p class="site-author-name" itemprop="name">JieSunn</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">50</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/jiesunn" title="GitHub &rarr; https://github.com/jiesunn" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:jiesunn@foxmail.com" title="E-Mail &rarr; mailto:jiesunn@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS"><span class="nav-number">2.</span> <span class="nav-text">XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#非持久型-XSS"><span class="nav-number">2.1.</span> <span class="nav-text">非持久型 XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#持久型-XSS"><span class="nav-number">2.2.</span> <span class="nav-text">持久型 XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于字符集的-XSS"><span class="nav-number">2.3.</span> <span class="nav-text">基于字符集的 XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于-Flash-的跨站-XSS"><span class="nav-number">2.4.</span> <span class="nav-text">基于 Flash 的跨站 XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#未经验证的跳转-XSS"><span class="nav-number">2.5.</span> <span class="nav-text">未经验证的跳转 XSS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSRF"><span class="nav-number">3.</span> <span class="nav-text">CSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CSRF-原理"><span class="nav-number">3.1.</span> <span class="nav-text">CSRF 原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预防-CSRF"><span class="nav-number">3.2.</span> <span class="nav-text">预防 CSRF</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-注入"><span class="nav-number">4.</span> <span class="nav-text">SQL 注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL-注入原理"><span class="nav-number">4.1.</span> <span class="nav-text">SQL 注入原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何预防-SQL-注入"><span class="nav-number">4.2.</span> <span class="nav-text">如何预防 SQL 注入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令行注入"><span class="nav-number">5.</span> <span class="nav-text">命令行注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DDoS-攻击"><span class="nav-number">6.</span> <span class="nav-text">DDoS 攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#网络层-DDoS"><span class="nav-number">6.1.</span> <span class="nav-text">网络层 DDoS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SYN-Flood-攻击"><span class="nav-number">6.1.1.</span> <span class="nav-text">SYN Flood 攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ACK-Flood-攻击"><span class="nav-number">6.1.2.</span> <span class="nav-text">ACK Flood 攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UDP-Flood-攻击"><span class="nav-number">6.1.3.</span> <span class="nav-text">UDP Flood 攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ICMP-Flood-攻击"><span class="nav-number">6.1.4.</span> <span class="nav-text">ICMP Flood 攻击</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络层-DDoS-防御"><span class="nav-number">6.2.</span> <span class="nav-text">网络层 DDoS 防御</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用层-DDoS"><span class="nav-number">6.3.</span> <span class="nav-text">应用层 DDoS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CC-攻击"><span class="nav-number">6.3.1.</span> <span class="nav-text">CC 攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS-Flood"><span class="nav-number">6.3.2.</span> <span class="nav-text">DNS Flood</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTP-慢速连接攻击"><span class="nav-number">6.3.3.</span> <span class="nav-text">HTTP 慢速连接攻击</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用层-DDoS-防御"><span class="nav-number">6.4.</span> <span class="nav-text">应用层 DDoS 防御</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他-DDoS-攻击"><span class="nav-number">6.5.</span> <span class="nav-text">其他 DDoS 攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#利用-XSS"><span class="nav-number">6.5.1.</span> <span class="nav-text">利用 XSS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#来自-P2P-网络攻击"><span class="nav-number">6.5.2.</span> <span class="nav-text">来自 P2P 网络攻击</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流量劫持"><span class="nav-number">7.</span> <span class="nav-text">流量劫持</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-劫持"><span class="nav-number">7.1.</span> <span class="nav-text">DNS 劫持</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-劫持"><span class="nav-number">7.2.</span> <span class="nav-text">HTTP 劫持</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器漏洞"><span class="nav-number">8.</span> <span class="nav-text">服务器漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#越权操作漏洞"><span class="nav-number">8.1.</span> <span class="nav-text">越权操作漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目录遍历漏洞"><span class="nav-number">8.2.</span> <span class="nav-text">目录遍历漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#物理路径泄漏"><span class="nav-number">8.3.</span> <span class="nav-text">物理路径泄漏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源码暴露漏洞"><span class="nav-number">8.4.</span> <span class="nav-text">源码暴露漏洞</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All rights reserved @JieSunn</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共143.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.1"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":true},"log":false});</script></body>
+</html>

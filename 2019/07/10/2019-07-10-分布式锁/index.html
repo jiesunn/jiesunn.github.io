@@ -96,27 +96,25 @@
 
 
 
-  <meta name="description" content="RDB持久化与AOF持久化">
-<meta name="keywords" content="Redis">
+  <meta name="description" content="基于Reids的分布式锁">
+<meta name="keywords" content="Redis,分布式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis持久化">
-<meta property="og:url" content="https://jiesunn.github.io/2019/04/05/2019-04-05-Redis持久化/index.html">
+<meta property="og:title" content="分布式锁">
+<meta property="og:url" content="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
-<meta property="og:description" content="RDB持久化与AOF持久化">
+<meta property="og:description" content="基于Reids的分布式锁">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/05/2019-04-05-Redis持久化/pic1.png">
-<meta property="og:updated_time" content="2019-09-10T03:08:50.739Z">
+<meta property="og:updated_time" content="2019-09-11T05:26:25.043Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis持久化">
-<meta name="twitter:description" content="RDB持久化与AOF持久化">
-<meta name="twitter:image" content="https://jiesunn.github.io/2019/04/05/2019-04-05-Redis持久化/pic1.png">
+<meta name="twitter:title" content="分布式锁">
+<meta name="twitter:description" content="基于Reids的分布式锁">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2019/04/05/2019-04-05-Redis持久化/">
+  <link rel="canonical" href="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/">
 
 
 
@@ -126,7 +124,7 @@
   };
 </script>
 
-  <title>Redis持久化 | JieSunn - BLOG</title>
+  <title>分布式锁 | JieSunn - BLOG</title>
   
 
 
@@ -364,7 +362,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/04/05/2019-04-05-Redis持久化/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -381,7 +379,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Redis持久化
+          <h1 class="post-title" itemprop="name headline">分布式锁
 
               
             
@@ -407,7 +405,7 @@
                 
               
 
-              <time title="创建时间：2019-04-05 14:48:39" itemprop="dateCreated datePublished" datetime="2019-04-05T14:48:39+08:00">2019-04-05</time>
+              <time title="创建时间：2019-07-10 13:10:38" itemprop="dateCreated datePublished" datetime="2019-07-10T13:10:38+08:00">2019-07-10</time>
             
 
             
@@ -425,7 +423,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/分布式/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a></span>
 
                 
                 
@@ -460,157 +458,75 @@
       
 
       
-        <p><i class="fa fa-quote-left"></i> RDB持久化与AOF持久化 <i class="fa fa-quote-right"></i></p>
+        <p><i class="fa fa-quote-left"></i> 基于Reids的分布式锁 <i class="fa fa-quote-right"></i></p>
 <a id="more"></a>
 
-<h3 id="什么是持久化？"><a href="#什么是持久化？" class="headerlink" title="什么是持久化？"></a>什么是持久化？</h3><blockquote>
-<p>持久化（Persistence），即把数据（如内存中的对象）保存到可永久保存的存储设备中（如磁盘）。持久化的主要应用是将内存中的对象存储在数据库中，或者存储在磁盘文件中、XML数据文件中等等。持久化是将程序数据在持久状态和瞬时状态间转换的机制。  —-摘自百度百科</p>
+<h3 id="什么是锁？"><a href="#什么是锁？" class="headerlink" title="什么是锁？"></a>什么是锁？</h3><ul>
+<li>在单进程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对代变量或代码块做同步，使其在修改这种变量时能够线性执行。</li>
+<li>而同步的本质是通过锁来实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做标记，这个标记必须每个线程都能看到，当标记不存在时可以设置标记，其余后续线程发现已有标记必须等待标记清除再去尝试设置。这个标记可以理解为锁。</li>
+<li>不同地方实现线程锁的方式也不一样，只要能满足所有线程都能看得到标记即可。如java中synchronize是在对象头设置标记，Lock接口的实现类基本上都只是某一个volitile修饰的int型变量其保证灭个线程都能拥有对该int的可见性和原子修改，linux内核中也是利用互斥量或信号量等内存数据做标记。</li>
+<li>除了利用内存数据做锁其实任何互斥的都能做锁（只考虑互斥情况），如流水表中流水号与时间结合做幂等校验可以看作是一个不会释放的锁，或者使用某个文件是否存在作为锁等。只需要满足在对标记进行修改能保证原子性和内存可见性即可。</li>
+</ul>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>此处主要指集群模式下，多个相同服务同时开启。</p>
+<h4 id="分布式情况"><a href="#分布式情况" class="headerlink" title="分布式情况"></a>分布式情况</h4><ul>
+<li>分布式与单机情况下最大的不同在于其不是多线程而是多进程。</li>
+<li>多线程由于可以共享堆内存，因此可以简单的采取内存作为标记存储位置。而进程之间甚至可能都不在同一台物理机上，因此需要将标记存储在一个所有进程都能看到的地方。</li>
+</ul>
+<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><blockquote>
+<p>分布式锁是控制分布式系统或不同系统见之间访问共享资源的一种锁实现。如果不同的系统或同一个系统的不同主机之间共享了某个资源时，往往需要互斥来防止彼此干扰来保证一致性。</p>
 </blockquote>
-<p>Redis的数据都是存储在内存中的，所以Redis持久化也就是要把Redis存储在内存中的数据保存到硬盘。</p>
-<p>Redis有两种持久化的方式：快照（RDB文件）和追加式文件（AOF文件）：</p>
 <ul>
-<li>RDB持久化方式会在一个特定的间隔保存那个时间点的一个数据快照。</li>
-<li>AOF持久化方式则会记录每一个服务器收到的写操作。在服务启动时，这些记录的操作会逐条执行从而重建出原来的数据。写操作命令记录的格式跟Redis协议一致，以追加的方式进行保存。</li>
-<li>Redis的持久化是可以禁用的，就是说你可以让数据的生命周期只存在于服务器的运行时间里。</li>
-<li>两种方式的持久化是可以同时存在的，但是当Redis重启时，AOF文件会被优先用于重建数据。</li>
+<li>当在分布式模型下，数据只有一份（或有限制），此时需要利用锁的技术控制某一时刻修改数据的进程数。</li>
+<li>与单机模式下的锁不仅需要保证进程可见，还需要考虑进程与锁之间的网络问题。</li>
+<li>分布式锁还是可以将标记存在内存，只是该内存不是某个进程分配的内存而是公共内存如Redis、Memcache。至于利用数据库、文件等做锁与单机的实现是一样的，只要保证标记能互斥就行。</li>
 </ul>
-<h3 id="RDB持久化"><a href="#RDB持久化" class="headerlink" title="RDB持久化"></a>RDB持久化</h3><p>RDB持久化是指在客户端输入<strong>save</strong>、<strong>bgsave</strong>或者达到配置文件自动保存快照条件时，将Redis 在内存中的数据生成快照保存在名字为 dump.rdb（文件名可修改）的二进制文件中。</p>
-<h4 id="创建与载入"><a href="#创建与载入" class="headerlink" title="创建与载入"></a>创建与载入</h4><p>RDB文件可以通过两个命令来生成：</p>
-<ul>
-<li><strong>SAVE</strong>：save命令会阻塞Redis服务器进程，直到RDB文件创建完毕为止，在Redis服务器阻塞期间，服务器不能处理任何命令请求。</li>
-<li><strong>BGSAVE</strong>：派生(fork)一个子进程来创建新的RDB文件，记录接收到BGSAVE当时的数据库状态，父进程继续处理接收到的命令，子进程完成文件的创建之后，会发送信号给父进程，而与此同时，父进程处理命令的同时，通过轮询来接收子进程的信号。</li>
-</ul>
-<blockquote>
-<p>注：bgsave命令执行期间 SAVE命令会被拒绝 不能同时执行两个BGSAVE命令 不能同时执行BGREWRITEAOF和BGSAVE命令</p>
-</blockquote>
-<p>RDB文件的载入一般情况是自动的，redis服务器启动的时候如果检测到RDB文件的存在，那么redis会自动载入这个文件。</p>
-<p>如果服务器开启了AOF持久化，那么服务器会优先使用AOF文件来还原数据库状态。</p>
-<p>RDB是通过保存键值对来记录数据库状态的，采用copy on write的模式，每次都是全量的备份。</p>
-<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>BGSAVE可以在不阻塞主进程的情况下完成数据的备份。可以通过redis.conf中设置多个自动保存条件，只要有一个条件被满足，服务器就会执行BGSAVE命令。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 触发自动保存快照</span><br><span class="line"># save &lt;seconds&gt; &lt;changes&gt;</span><br><span class="line">save 900 1    # 900 秒内有至少有 1 个键被改动</span><br><span class="line">save 300 10   # 300 秒内有至少有 10 个键被改动</span><br><span class="line">save 60 10000 # 60 秒内有至少有 1000 个键被改动</span><br><span class="line"></span><br><span class="line"># 设置在保存快照出错时，是否停止redis命令的写入</span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line"></span><br><span class="line"># 是否在导出.rdb数据库文件的时候采用LZF压缩</span><br><span class="line">rdbcompression yes</span><br><span class="line"></span><br><span class="line">#  是否开启CRC64校验</span><br><span class="line">rdbchecksum yes</span><br><span class="line"></span><br><span class="line"># 导出数据库的文件名称</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line"></span><br><span class="line"># 导出的数据库所在的目录</span><br><span class="line">dir ./</span><br></pre></td></tr></table></figure>
+<h3 id="锁实现"><a href="#锁实现" class="headerlink" title="锁实现"></a>锁实现</h3><h4 id="基于数据库"><a href="#基于数据库" class="headerlink" title="基于数据库"></a>基于数据库</h4><p>基于数据库的锁实现也有两种方式，一是基于数据库表，另一种是基于数据库排他锁。</p>
+<h5 id="基于数据库的增删"><a href="#基于数据库的增删" class="headerlink" title="基于数据库的增删"></a>基于数据库的增删</h5><p>基于数据库表增删是最简单的方式，首先创建一张锁的表主要包含下列字段：方法名，时间戳等字段。</p>
+<p>具体使用的方法，当需要锁住某个方法时，往该表中插入一条相关的记录。这边需要注意，方法名是有唯一性约束的，如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。</p>
+<p>执行完毕，需要delete该记录。</p>
+<p>当然，对于上述方案可以进行优化，如应用主从数据库，数据之间双向同步。一旦挂掉快速切换到备库上；做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍；使用while循环，直到insert成功再返回成功，虽然并不推荐这样做；还可以记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了，实现可重入锁。</p>
+<h5 id="基于数据库排他锁"><a href="#基于数据库排他锁" class="headerlink" title="基于数据库排他锁"></a>基于数据库排他锁</h5><p>我们还可以通过数据库的排他锁来实现分布式锁。基于MySql的InnoDB引擎，可以使用以下方法来实现加锁操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>&#123;</span><br><span class="line">    connection.setAutoCommit(<span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(count &lt; <span class="number">4</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            select * from lock where lock_name=xxx <span class="keyword">for</span> update;</span><br><span class="line">            <span class="keyword">if</span>(结果不为空)&#123;</span><br><span class="line">                <span class="comment">//代表获取到锁</span></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//为空或者抛异常的话都表示没有获取到锁</span></span><br><span class="line">        sleep(<span class="number">1000</span>);</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> LockException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><p>优点：</p>
+<p>在查询语句后面增加for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。其他没有获取到锁的就会阻塞在上述select语句上，可能的结果有2种，在超时之前获取到了锁，在超时之前仍未获取到锁。</p>
+<p>获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，释放锁connection.commit()。</p>
+<p>存在的问题主要是性能不高和sql超时的异常。</p>
+<h5 id="基于数据库锁的优缺点"><a href="#基于数据库锁的优缺点" class="headerlink" title="基于数据库锁的优缺点"></a>基于数据库锁的优缺点</h5><p>上面两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。</p>
 <ul>
-<li>RDB是一个非常紧凑（有压缩）的文件,它保存了某个时间点的数据,非常适用于数据的备份。</li>
-<li>RDB作为一个非常紧凑（有压缩）的文件，可以很方便传送到另一个远端数据中心 ，非常适用于灾难恢复.</li>
-<li>RDB在保存RDB文件时父进程唯一需要做的就是fork出一个子进程,接下来的工作全部由子进程来做，父进程不需要再做其他IO操作，所以RDB持久化方式可以最大化redis的性能.</li>
-<li>与AOF相比,在恢复大的数据集的时候，RDB方式会更快一些.</li>
+<li>优点是直接借助数据库，简单容易理解。</li>
+<li>缺点是操作数据库需要一定的开销，性能问题需要考虑。</li>
 </ul>
-<p>缺点：</p>
+<h4 id="基于Zookeeper"><a href="#基于Zookeeper" class="headerlink" title="基于Zookeeper"></a>基于Zookeeper</h4><p>基于zookeeper临时有序节点可以实现的分布式锁。每个客户端对某个方法加锁时，在zookeeper上的与该方法对应的指定节点的目录下，生成一个唯一的瞬时有序节点。 判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。 当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。</p>
+<p>提供的第三方库有curator，具体使用读者可以自行去看一下。Curator提供的InterProcessMutex是分布式锁的实现。acquire方法获取锁，release方法释放锁。另外，锁释放、阻塞锁、可重入锁等问题都可以有有效解决。讲下阻塞锁的实现，客户端可以通过在ZK中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是就获取到锁，便可以执行业务逻辑。</p>
+<p>最后，Zookeeper实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK中创建和删除节点只能通过Leader服务器来执行，然后将数据同不到所有的Follower机器上。并发问题，可能存在网络抖动，客户端和ZK集群的session连接断了，zk集群以为客户端挂了，就会删除临时节点，这时候其他客户端就可以获取到分布式锁了。</p>
+<h4 id="基于Redis"><a href="#基于Redis" class="headerlink" title="基于Redis"></a>基于Redis</h4><p>相对于基于数据库实现分布式锁的方案来说，基于缓存来实现在性能方面会表现的更好一点，存取速度快很多。而且很多缓存是可以集群部署的，可以解决单点问题。基于缓存的锁有好几种，如memcached、redis、下面主要讲解基于redis的分布式实现。</p>
+<h5 id="SETNX"><a href="#SETNX" class="headerlink" title="SETNX"></a>SETNX</h5><p>使用redis的SETNX实现分布式锁，多个进程执行以下Redis命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETNX lock.id &lt;current Unix time + lock timeout + 1&gt;</span><br></pre></td></tr></table></figure>
+
+<p>SETNX是将 key 的值设为 value，当且仅当 key 不存在。若给定的 key 已经存在，则 SETNX 不做任何动作。</p>
 <ul>
-<li>RDB容易造成数据的丢失。假设每5分钟保存一次快照，如果Redis因为某些原因不能正常工作，那么从上次产生快照到Redis出现问题这段时间的数据就会丢失了。</li>
-<li>RDB使用<strong>fork()</strong>产生子进程进行数据的持久化，如果数据比较大的话可能就会花费点时间，造成Redis停止服务几毫秒。如果数据量很大且CPU性能不是很好的时候，停止服务的时间甚至会到1秒。</li>
+<li>返回1，说明该进程获得锁，SETNX将键 lock.id 的值设置为锁的超时时间，当前时间 +加上锁的有效时间。</li>
+<li>返回0，说明其他进程已经获得了锁，进程不能进入临界区。进程可以在一个循环中不断地尝试 SETNX 操作，以获得锁。</li>
 </ul>
-<h3 id="AOF持久化"><a href="#AOF持久化" class="headerlink" title="AOF持久化"></a>AOF持久化</h3><p>快照并不是很可靠。如果你的电脑突然宕机了，或者电源断了，又或者不小心杀掉了进程，那么最新的数据就会丢失。而AOF文件则提供了一种更为可靠的持久化方式。</p>
-<p>AOF持久化（Append-Only-File），与RDB持久化不同，AOF持久化是通过保存Redis服务器锁执行的写状态来记录数据库的。每当Redis接受到会修改数据集的命令时，就会把命令追加到AOF文件里，当你重启Redis时，AOF里的命令会被重新执行一次，重建数据。</p>
-<p>具体来说，RDB持久化相当于备份数据库状态，而AOF持久化是备份数据库接收到的命令，所有被写入AOF的命令都是以redis的协议格式来保存的。</p>
-<p>在AOF持久化的文件中，数据库会记录下所有变更数据库状态的命令，除了指定数据库的select命令，其他的命令都是来自client的，这些命令会以追加(append)的形式保存到文件中。</p>
-<h4 id="开启AOF持久化"><a href="#开启AOF持久化" class="headerlink" title="开启AOF持久化"></a>开启AOF持久化</h4><p>修改redis.conf配置文件，默认是appendonly no（关闭状态），将no改为yes即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
-
-<p>在客户端输入如下命令也可，但是Redis服务器重启后会失效</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; config set appendonly yes</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-
-<p>接下来看看AOF持久化功能的实现</p>
-<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>AOF持久化功能的实现可以分为命令追加（append）、文件写入和文件同步（sync）三个步骤。下面就是三个步骤的整个过程。</p>
-<p>在Redis客户端输入如下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set learnRedis testAOF</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-
-<p>appendonly.aof文件会增加如下内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">*2</span><br><span class="line">$6</span><br><span class="line">SELECT</span><br><span class="line">$1</span><br><span class="line">0</span><br><span class="line">*3</span><br><span class="line">$3</span><br><span class="line">set</span><br><span class="line">$10</span><br><span class="line">learnRedis</span><br><span class="line">$7</span><br><span class="line">testAOF</span><br></pre></td></tr></table></figure>
-
-<h5 id="命令追加"><a href="#命令追加" class="headerlink" title="命令追加"></a>命令追加</h5><p>AOF持久化功能开启时，服务器在执行完一个写命令之后，会以协议格式将被执行的写命令追加到服务器状态的aof_buf缓冲区的末尾。此时缓冲区的记录还没有写入到appendonly.aof文件中。</p>
-<h5 id="文件的写入和同步"><a href="#文件的写入和同步" class="headerlink" title="文件的写入和同步"></a>文件的写入和同步</h5><p>为什么将文件写入和文件同步合在一块讲呢？因为配置文件中提供了一个appendfsync参数，这个参数控制着文件写入和同步的行为。</p>
-<p>关于文件的写入和同步的资料如下</p>
-<blockquote>
-<p>因为为了提高文件的写入效率，在现代操作系统中，当用户调用write函数，将一些数据写入到文件的时候，os通常会将写入数据暂时保存在一个内存缓冲区里面（例如，unix系统实现在内核中设有缓冲区高速缓存或页高速缓存，当我们向文件写入数据时，内核通常先将数据复制到缓冲区中，然后排入队列，晚些时候再写入磁盘），这种方式称为延迟写，等到缓冲区的空间被填满，或者超过了指定的时限，或者内核需要重用缓冲区存放其它磁盘块数据时，才会真正将缓冲区中的所有数据写入到磁盘里面。</p>
-</blockquote>
-<p>简单来说就是</p>
-<ul>
-<li>文件写入：只是写入到了内存缓冲区，可能还没有写到文件所拥有的磁盘数据块上</li>
-<li>文件同步：将缓冲区中的内容冲洗到磁盘上</li>
-</ul>
-<p>你可以配置Redis调用fsync的频率，有三个选项：</p>
-<ul>
-<li>每当有新命令追加到AOF的时候调用fsync。速度最慢，但是最安全。</li>
-<li>每秒fsync一次。速度快（2.4版本跟快照方式速度差不多），安全性不错（最多丢失1秒的数据）。</li>
-<li>从不fsync，交由系统去处理。这个方式速度最快，但是安全性一般。</li>
-</ul>
-<p>推荐使用每秒fsync一次的方式（默认的方式），因为它速度快，安全性也不错。参数如下：</p>
-<table>
-<thead>
-<tr>
-<th>appendfsync</th>
-<th>效果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>always</td>
-<td>每次有新命令时，就将缓冲区数据写入并同步到 AOF 文件）</td>
-</tr>
-<tr>
-<td>everysec</td>
-<td>每秒将缓冲区的数据写入并同步到 AOF 文件</td>
-</tr>
-<tr>
-<td>no</td>
-<td>将缓冲区数据写入AOF 文件，但是同步操作到交给操作系统来处理</td>
-</tr>
-</tbody></table>
-<h4 id="载入与数据还原"><a href="#载入与数据还原" class="headerlink" title="载入与数据还原"></a>载入与数据还原</h4><p>读取AOF文件并还原数据库的步骤如下</p>
+<h5 id="存在死锁的问题"><a href="#存在死锁的问题" class="headerlink" title="存在死锁的问题"></a>存在死锁的问题</h5><p>SETNX实现分布式锁，可能会存在死锁的情况。与单机模式下的锁相比，分布式环境下不仅需要保证进程可见，还需要考虑进程与锁之间的网络问题。某个线程获取了锁之后，断开了与Redis 的连接，锁没有及时释放，竞争该锁的其他线程都会hung，产生死锁的情况。</p>
+<p>在使用 SETNX 获得锁时，我们将键 lock.id 的值设置为锁的有效时间，线程获得锁后，其他线程还会不断的检测锁是否已超时，如果超时，等待的线程也将有机会获得锁。然而，锁超时，我们不能简单地使用 DEL 命令删除键 lock.id 以释放锁。</p>
+<p>考虑以下情况:</p>
 <ol>
-<li>创建一个不带网络连接的伪客户端</li>
-<li>从AOF文件中分析并读取出一条写命令</li>
-<li>使用伪客户端执行被读出的写命令</li>
-<li>一直执行步骤2、3，直到AOF文件中的所有写命令都被处理完毕为止</li>
+<li>A已经首先获得了锁 lock.id，然后线A断线。B,C都在等待竞争该锁；</li>
+<li>B,C读取lock.id的值，比较当前时间和键 lock.id 的值来判断是否超时，发现超时；</li>
+<li>B执行 DEL lock.id命令，并执行 SETNX lock.id 命令，并返回1，B获得锁；</li>
+<li>C由于各刚刚检测到锁已超时，执行 DEL lock.id命令，将B刚刚设置的键 lock.id 删除，执行 SETNX lock.id命令，并返回1，即C获得锁。</li>
 </ol>
-<img src="/2019/04/05/2019-04-05-Redis持久化/pic1.png">
-
-<p>这时可能会出现一个问题。服务器可能在程序正在对 AOF 文件进行写入时停机，造成了 AOF 文件出错，那么 Redis 在重启时会拒绝载入这个 AOF 文件，从而确保数据的一致性不会被破坏 当发生这种情况时， 可以用以下方法来修复出错的 AOF 文件：</p>
-<ul>
-<li>为现有的 AOF 文件创建一个备份。</li>
-<li>使用 Redis 附带的 redis-check-aof 程序，对原来的 AOF 文件进行修复: redis-check-aof –fix</li>
-<li>（可选）使用 diff -u 对比修复后的 AOF 文件和原始 AOF 文件的备份，查看两个文件之间的不同之处。</li>
-<li>重启 Redis 服务器，等待服务器载入修复后的 AOF 文件，并进行数据恢复。</li>
-</ul>
-<p>另外redis.conf配置文件中还提供了一个参数来控制是否忽略最后一条可能存在问题的指令，如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aof-load-truncated yes</span><br></pre></td></tr></table></figure>
-
-<h4 id="日志重写"><a href="#日志重写" class="headerlink" title="日志重写"></a>日志重写</h4><p>随着写操作的不断增加，AOF文件会越来越大。例如你递增一个计数器100次，那么最终结果就是数据集里的计数器的值为最终的递增结果，但是AOF文件里却会把这100次操作完整的记录下来。而事实上要恢复这个记录，只需要1个命令就行了，也就是说AOF文件里那100条命令其实可以精简为1条。所以Redis支持这样一个功能：在不中断服务的情况下在后台重建AOF文件。</p>
-<p>AOF重写机制的触发有两种机制，一个是通过调用命令BGREWRITEAOF</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BGREWRITEAOF</span><br><span class="line">Background append only file rewriting started</span><br></pre></td></tr></table></figure>
-
-<p>另一种是根据配置文件中的参数触发，参数如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto-aof-rewrite-percentage 100 #当前AOF文件大小和上一次重写时AOF文件大小的比值</span><br><span class="line">auto-aof-rewrite-min-size 64mb  #文件的最小体积</span><br></pre></td></tr></table></figure>
-
-<p>服务端会出现如下信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1349:M 30 Jul 17:19:25.311 * Background append only file rewriting started by pid 1392</span><br><span class="line">1349:M 30 Jul 17:19:25.379 * AOF rewrite child asks to stop sending diffs.</span><br><span class="line">1392:C 30 Jul 17:19:25.379 * Parent agreed to stop sending diffs. Finalizing AOF...</span><br><span class="line">1392:C 30 Jul 17:19:25.380 * Concatenating 0.00 MB of AOF diff received from parent.</span><br><span class="line">1392:C 30 Jul 17:19:25.380 * SYNC append only file rewrite performed</span><br><span class="line">1392:C 30 Jul 17:19:25.381 * AOF rewrite: 4 MB of memory used by copy-on-write</span><br><span class="line">1349:M 30 Jul 17:19:25.466 * Background AOF rewrite terminated with success</span><br><span class="line">1349:M 30 Jul 17:19:25.467 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)</span><br><span class="line">1349:M 30 Jul 17:19:25.467 * Background AOF rewrite finished successfully</span><br></pre></td></tr></table></figure>
-
-<p>重写步骤</p>
-<ul>
-<li>Redis调用fork()，产生一个子进程。</li>
-<li>子进程把新的AOF写到一个临时文件里。</li>
-<li>主进程持续把新的变动写到内存里的buffer，同时也会把这些新的变动写到旧的AOF里，这样即使重写失败也能保证数据的安全。</li>
-<li>当子进程完成文件的重写后，主进程会获得一个信号，然后把内存里的buffer追加到子进程生成的那个新AOF里。</li>
-<li>对新的AOF文件进行改名，原子的覆盖现有的AOF文件。</li>
-</ul>
-<p>AOF重写功能有大量写入操作，所以redis才用子进程来处理AOF重写。这里带来一个新的问题，由于处理重新的是子进程，这样意味着如果主线程的数据在此时被修改，备份的数据和主库的数据将会有不一致的情况发生。因此redis还设置了一个AOF重写缓冲区，这个缓冲区在子进程被创建开始之后开始使用，这个期间，所有的命令会被存两份，一份在AOF缓存空间，一份在AOF重写缓冲区，当AOF重写完成之后，子进程发送信号给主进程，通知主进程将AOF重写缓冲区的内容添加到AOF文件中。</p>
-<p>注：AOF重写不需要对现有的AOF文件进行任何读取、分析和写入操作。</p>
-<h4 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 是否开启AOF功能</span><br><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line"># AOF文件件名称</span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># 写入AOF文件的三种方式</span><br><span class="line"># appendfsync always</span><br><span class="line">appendfsync everysec</span><br><span class="line"># appendfsync no</span><br><span class="line"></span><br><span class="line"># 重写AOF时，是否继续写AOF文件</span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line"></span><br><span class="line"># 自动重写AOF文件的条件</span><br><span class="line">auto-aof-rewrite-percentage 100 #百分比</span><br><span class="line">auto-aof-rewrite-min-size 64mb #大小</span><br><span class="line"></span><br><span class="line"># 是否忽略最后一条可能存在问题的指令</span><br><span class="line">aof-load-truncated yes</span><br></pre></td></tr></table></figure>
-
-<h4 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h4><p>优点：</p>
-<ul>
-<li>比RDB可靠。你可以制定不同的fsync策略：不进行fsync、每秒fsync一次和每次查询进行fsync。默认是每秒fsync一次。这意味着你最多丢失一秒钟的数据。</li>
-<li>AOF日志文件是一个纯追加的文件。就算是遇到突然停电的情况，也不会出现日志的定位或者损坏问题。甚至如果因为某些原因（例如磁盘满了）命令只写了一半到日志文件里，我们也可以用<strong>redis-check-aof</strong>这个工具很简单的进行修复。</li>
-<li>当AOF文件太大时，Redis会自动在后台进行重写。重写很安全，因为重写是在一个新的文件上进行，同时Redis会继续往旧的文件追加数据。新文件上会写入能重建当前数据集的最小操作命令的集合。当新文件重写完，Redis会把新旧文件进行切换，然后开始把数据写到新文件上。</li>
-<li>AOF把操作命令以简单易懂的格式一条接一条的保存在文件里，很容易导出来用于恢复数据。例如我们不小心用<strong>FLUSHALL</strong>命令把所有数据刷掉了，只要文件没有被重写，我们可以把服务停掉，把最后那条命令删掉，然后重启服务，这样就能把被刷掉的数据恢复回来。</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>在相同的数据集下，AOF文件的大小一般会比RDB文件大。</li>
-<li>在某些fsync策略下，AOF的速度会比RDB慢。通常fsync设置为每秒一次就能获得比较高的性能，而在禁止fsync的情况下速度可以达到RDB的水平。</li>
-<li>在过去曾经发现一些很罕见的BUG导致使用AOF重建的数据跟原数据不一致的问题。</li>
-</ul>
+<p>上面的步骤很明显出现了问题，导致B,C同时获取了锁。在检测到锁超时后，线程不能直接简单地执行 DEL 删除键的操作以获得锁。对于上面的步骤进行改进，问题是出在删除键的操作上面，那么获取锁之后应该怎么改进呢？</p>
+<p>首先看一下redis的GETSET这个操作，GETSET key value，将给定 key 的值设为 value ，并返回 key 的旧值(old value)。利用这个操作指令，我们改进一下上述的步骤。</p>
+<ol>
+<li>A已经首先获得了锁 lock.id，然后线A断线。B,C都在等待竞争该锁；</li>
+<li>B,C读取lock.id的值，比较当前时间和键 lock.id 的值来判断是否超时，发现超时；</li>
+<li>B检测到锁已超时，即当前的时间大于键 lock.id 的值，B会执行GETSET lock.id &lt;current Unix timestamp + lock timeout + 1&gt;设置时间戳，通过比较键 lock.id 的旧值是否小于当前时间，判断进程是否已获得锁；</li>
+<li>B发现GETSET返回的值小于当前时间，则执行 DEL lock.id命令，并执行 SETNX lock.id 命令，并返回1，B获得锁；</li>
+<li>C执行GETSET得到的时间大于当前时间，则继续等待。</li>
+</ol>
+<p>在线程释放锁，即执行 DEL lock.id 操作前，需要先判断锁是否已超时。如果锁已超时，那么锁可能已由其他线程获得，这时直接执行 DEL lock.id 操作会导致把其他线程已获得的锁释放掉。</p>
 
       
     </div>
@@ -635,6 +551,8 @@
           
             <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag">Redis</i></a>
           
+            <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag">分布式</i></a>
+          
         </div>
       
 
@@ -646,8 +564,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/03/2019-04-03-Redis内存模型及应用解读/" rel="next" title="Redis内存模型及应用解读">
-                <i class="fa fa-chevron-left"></i> Redis内存模型及应用解读
+              <a href="/2019/05/10/2019-05-10-常见Web安全攻防总结/" rel="next" title="常见 Web 安全攻防总结">
+                <i class="fa fa-chevron-left"></i> 常见 Web 安全攻防总结
               </a>
             
           </div>
@@ -656,8 +574,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/10/2019-04-10-Redis分布式锁/" rel="prev" title="Redis分布式锁">
-                Redis分布式锁 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/08/27/2019-08-27-小米面经（转正）/" rel="prev" title="小米面经（转正）">
+                小米面经（转正） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -729,7 +647,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">46</span>
+                    <span class="site-state-item-count">50</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -766,7 +684,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -837,7 +759,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">27</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -901,7 +827,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是持久化？"><span class="nav-number">1.</span> <span class="nav-text">什么是持久化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB持久化"><span class="nav-number">2.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建与载入"><span class="nav-number">2.1.</span> <span class="nav-text">创建与载入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">2.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优缺点"><span class="nav-number">2.3.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF持久化"><span class="nav-number">3.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#开启AOF持久化"><span class="nav-number">3.1.</span> <span class="nav-text">开启AOF持久化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现"><span class="nav-number">3.2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#命令追加"><span class="nav-number">3.2.1.</span> <span class="nav-text">命令追加</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#文件的写入和同步"><span class="nav-number">3.2.2.</span> <span class="nav-text">文件的写入和同步</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#载入与数据还原"><span class="nav-number">3.3.</span> <span class="nav-text">载入与数据还原</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日志重写"><span class="nav-number">3.4.</span> <span class="nav-text">日志重写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置-1"><span class="nav-number">3.5.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优缺点-1"><span class="nav-number">3.6.</span> <span class="nav-text">优缺点</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是锁？"><span class="nav-number">1.</span> <span class="nav-text">什么是锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式"><span class="nav-number">2.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式情况"><span class="nav-number">2.1.</span> <span class="nav-text">分布式情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式锁"><span class="nav-number">2.2.</span> <span class="nav-text">分布式锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁实现"><span class="nav-number">3.</span> <span class="nav-text">锁实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基于数据库"><span class="nav-number">3.1.</span> <span class="nav-text">基于数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库的增删"><span class="nav-number">3.1.1.</span> <span class="nav-text">基于数据库的增删</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库排他锁"><span class="nav-number">3.1.2.</span> <span class="nav-text">基于数据库排他锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库锁的优缺点"><span class="nav-number">3.1.3.</span> <span class="nav-text">基于数据库锁的优缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Zookeeper"><span class="nav-number">3.2.</span> <span class="nav-text">基于Zookeeper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Redis"><span class="nav-number">3.3.</span> <span class="nav-text">基于Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SETNX"><span class="nav-number">3.3.1.</span> <span class="nav-text">SETNX</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#存在死锁的问题"><span class="nav-number">3.3.2.</span> <span class="nav-text">存在死锁的问题</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -943,7 +869,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共字</span>
+  <span class="post-count">博客全站共143.8k字</span>
 </div>
 
         
