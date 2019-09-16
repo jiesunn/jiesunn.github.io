@@ -96,29 +96,25 @@
 
 
 
-  <meta name="description" content="查询器的查询负优化？">
-<meta name="keywords" content="MySQL,数据库,数据库优化">
+  <meta name="description" content="关于分布式Redis经常被问到的问题">
+<meta name="keywords" content="Redis,分布式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL优化之index_merge">
-<meta property="og:url" content="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/index.html">
+<meta property="og:title" content="分布式缓存问题">
+<meta property="og:url" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
-<meta property="og:description" content="查询器的查询负优化？">
+<meta property="og:description" content="关于分布式Redis经常被问到的问题">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/pic1.png">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/pic2.png">
-<meta property="og:image" content="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/pic3.png">
-<meta property="og:updated_time" content="2019-09-09T04:59:41.586Z">
+<meta property="og:updated_time" content="2019-09-16T10:30:51.185Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MySQL优化之index_merge">
-<meta name="twitter:description" content="查询器的查询负优化？">
-<meta name="twitter:image" content="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/pic1.png">
+<meta name="twitter:title" content="分布式缓存问题">
+<meta name="twitter:description" content="关于分布式Redis经常被问到的问题">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/">
+  <link rel="canonical" href="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/">
 
 
 
@@ -128,7 +124,7 @@
   };
 </script>
 
-  <title>MySQL优化之index_merge | JieSunn - BLOG</title>
+  <title>分布式缓存问题 | JieSunn - BLOG</title>
   
 
 
@@ -366,7 +362,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/04/15/2019-04-15-MySQL优化之index_merge/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -383,7 +379,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL优化之index_merge
+          <h1 class="post-title" itemprop="name headline">分布式缓存问题
 
               
             
@@ -409,7 +405,7 @@
                 
               
 
-              <time title="创建时间：2019-04-15 19:04:47" itemprop="dateCreated datePublished" datetime="2019-04-15T19:04:47+08:00">2019-04-15</time>
+              <time title="创建时间：2019-09-15 17:46:20" itemprop="dateCreated datePublished" datetime="2019-09-15T17:46:20+08:00">2019-09-15</time>
             
 
             
@@ -427,7 +423,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/分布式/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a></span>
 
                 
                 
@@ -462,49 +458,63 @@
       
 
       
-        <p><i class="fa fa-quote-left"></i> 查询器的查询负优化？ <i class="fa fa-quote-right"></i></p>
+        <p><i class="fa fa-quote-left"></i> 关于分布式Redis经常被问到的问题 <i class="fa fa-quote-right"></i></p>
 <a id="more"></a>
 
-<h3 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h3><p>最近在完成一个项目的三期工作，很是艰辛。<br>前两期历史遗留了许多慢查询，但由于过于久远，团队一直没有合适的时间去再回顾一遍业务逻辑，趁着这次三期工作，也想着顺便干掉之前的慢查询。</p>
-<p>主要是针对下表：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `demo` (</span><br><span class="line">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `site_id` int(11) unsigned NOT NULL DEFAULT &apos;1&apos; COMMENT &apos;站点ID&apos;,</span><br><span class="line">  `survey_id` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;问卷id&apos;,</span><br><span class="line">  `date` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;日期 (例如: 20160906)&apos;,</span><br><span class="line">  `org_id` varchar(20) NOT NULL DEFAULT &apos;&apos; COMMENT &apos;门店id&apos;,</span><br><span class="line">  `choice` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;选项id&apos;,</span><br><span class="line">  `num` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;选择数量&apos;,</span><br><span class="line">  `send_num` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;问卷发送量&apos;,</span><br><span class="line">  `reply_num` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;问卷回复量&apos;,</span><br><span class="line">  `created_at` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;创建时间&apos;,</span><br><span class="line">  `updated_at` int(11) unsigned NOT NULL DEFAULT &apos;0&apos; COMMENT &apos;更新时间&apos;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_survey_id` (`survey_id`),</span><br><span class="line">  KEY `idx_org_id` (`org_id`),</span><br><span class="line">  KEY `idx_date_id_org` (`date`,`survey_id`,`org_id`)</span><br><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=2273822 DEFAULT CHARSET=utf8 COMMENT=&apos;问卷选项分布&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>缓存雪崩我们可以简单的理解为：由于原有缓存失效，新缓存未到期间(例如：我们设置缓存时采用了相同的过期时间，在同一时刻出现大面积的缓存过期)，所有原本应该访问缓存的请求都去查询数据库了，而对数据库CPU和内存造成巨大压力，严重的会造成数据库宕机。从而形成一系列连锁反应，造成整个系统崩溃。</p>
+<p>缓存正常从Redis中获取，示意图如下：</p>
 
-<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>有这么一句sql（涉及敏感数据均用’×‘代替）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">SELECT `id`, `org_id`, `date`, `survey_id`, `send_num`, `reply_num`, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __A0, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __B0, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __C0, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __D0, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __E0, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __A1, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __B1, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __C1, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __D1, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __E1, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __A2, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __B2, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __C2, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __D2, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __E2, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __A3, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __B3, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __C3, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __D3, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __E3, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __A4, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __B4, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __C4, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __D4, </span><br><span class="line">SUM(case when choice=&apos;×&apos; then num else 0 end) as __E4 </span><br><span class="line">FROM `demo` </span><br><span class="line">WHERE `date` BETWEEN 20190312 AND 20190412 AND `survey_id` = &apos;×&apos; AND `org_id`=&apos;×&apos; AND `site_id`=&apos;×&apos;</span><br><span class="line">GROUP BY `date`, `survey_id`, `org_id` ORDER BY `date` DESC LIMIT 10;</span><br></pre></td></tr></table></figure>
 
-<p>其执行时间足足有829ms，当org_id是in操作的时候，可以达到2000ms+。</p>
-<p>肯定有人第一直觉，觉得是SUM函数计算过多，导致慢查询。首先，这里并不会介绍其中的业务逻辑，但是这么多SUM运算都是有意义的；其次，这并不是导致慢查询的原因，把SUM全部去掉，执行时间还是有800ms+。</p>
-<p>一眼看不出优化策略的，我们可以试着explain一下它：</p>
-<img src="/2019/04/15/2019-04-15-MySQL优化之index_merge/pic1.png">
+<p>缓存失效瞬间示意图如下：</p>
 
-<p>根据索引最左匹配原则，为什么没有命中idx_date_survey_org这个联合索引呢？在sql的实际执行过程，MySQL查询优化器会根据实际的情况选择索引，之所以在这里不命中idx_date_survey_org是因为date检索的时间跨度比较大，检索数据多，不如查询优化器选择的索引。</p>
-<p>那么查询优化器选择的索引又是什么呢？可以看到在这一条sql的执行过程中竟然用到了两个索引，并且进行了一个叫index_merge的东西。</p>
-<h3 id="index-merge"><a href="#index-merge" class="headerlink" title="index_merge"></a>index_merge</h3><p>什么是index_merge？查阅资料说明如下：</p>
-<blockquote>
-<p>MySQL5.0之前，一个表一次只能使用一个索引，无法同时使用多个索引分别进行条件扫描。但是从5.1开始，引入了 index merge 优化技术，对同一个表可以使用多个索引分别进行条件扫描。</p>
-</blockquote>
-<p>原来是这样，所以说这是MySQL针对查询的优化才对…吗？</p>
-<p>这里不得不介绍一下survey_id这一列的特殊性：这个字段总共有三个值，分别对应每一期。也就是说合适的时间跨度下，survey_id的值是一样的。而全表200w+的数据，如果要对此索引进行检索，真的有必要吗？</p>
-<p>稍微了解过索引优化的就会知道，这当然是没有必要的。不仅没有必要，这还会拖慢整个sql的查询。因为index_merge必须等待survey_id检索完，再进行intersect（此sql用到的合并算法）。</p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>如此一来，优化策略就很简单粗暴了，有以下三种：</p>
+
+<p>缓存失效时的雪崩效应对底层系统的冲击非常可怕！大多数系统设计者考虑用加锁或者队列的方式保证来保证不会有大量的线程对数据库一次性进行读写，从而避免失效时大量的并发请求落到底层存储系统上。还有一个简单方案就时讲缓存失效时间分散开，比如我们可以在原有的失效时间基础上增加一个随机值，比如1-5分钟随机，这样每一个缓存的过期时间的重复率就会降低，就很难引发集体失效的事件。</p>
+<p>以下简单介绍两种实现方式的伪代码：</p>
+<p>（1）碰到这种情况，一般并发量不是特别多的时候，使用最多的解决方案是加锁排队，伪代码如下：</p>
+
+
+<p>加锁排队只是为了减轻数据库的压力，并没有提高系统吞吐量。假设在高并发下，缓存重建期间key是锁着的，这是过来1000个请求999个都在阻塞的。同样会导致用户等待超时，这是个治标不治本的方法！</p>
+<p>注意：加锁排队的解决方式分布式环境的并发问题，有可能还要解决分布式锁的问题；线程还会被阻塞，用户体验很差！因此，在真正的高并发场景下很少使用！</p>
+<p>（2）还有一个解决办法解决方案是：给每一个缓存数据增加相应的缓存标记，记录缓存的是否失效，如果缓存标记失效，则更新数据缓存，实例伪代码如下：</p>
+
+
+<p>解释说明：</p>
 <ul>
-<li>强制使用其一索引</li>
-<li>直接干掉where中的survey_id</li>
-<li>联系dba干掉index_merge</li>
+<li>缓存标记：记录缓存数据是否过期，如果过期会触发通知另外的线程在后台去更新实际key的缓存；</li>
+<li>缓存数据：它的过期时间比缓存标记的时间延长1倍，例：标记缓存时间30分钟，数据缓存设置为60分钟。 这样，当缓存标记key过期后，实际缓存还能把旧数据返回给调用端，直到另外的线程在后台更新完成后，才会返回新缓存。</li>
 </ul>
-<p>最后一种过于粗暴，不建议使用（因为这可能会被dba干掉）</p>
-<h4 id="强制索引"><a href="#强制索引" class="headerlink" title="强制索引"></a>强制索引</h4><p>优化后的语句如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT `id`, `org_id`, `date`, `survey_id`, `send_num`, `reply_num`, </span><br><span class="line">...</span><br><span class="line">FROM `demo` FORCE index (idx_org_id)</span><br><span class="line">WHERE `date` BETWEEN 20190312 AND 20190412 AND `survey_id` = &apos;×&apos; AND `org_id`=&apos;×&apos; AND `site_id`=&apos;×&apos;</span><br><span class="line">GROUP BY `date`, `survey_id`, `org_id` ORDER BY `date` DESC LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>关于缓存崩溃的解决方法，这里提出了三种方案：使用锁或队列、设置过期标志更新缓存、为key设置不同的缓存失效时间，还有一各被称为“二级缓存”的解决方法，有兴趣的读者可以自行研究。</p>
+<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>缓存穿透是指用户查询数据，在数据库没有，自然在缓存中也不会有。这样就导致用户查询的时候，在缓存中找不到，每次都要去数据库再查询一遍，然后返回空（相当于进行了两次无用的查询）。这样请求就绕过缓存直接查数据库，这也是经常提的缓存命中率问题。</p>
+<p>有很多种方法可以有效地解决缓存穿透问题，最常见的则是采用布隆过滤器，将所有可能存在的数据哈希到一个足够大的bitmap中，一个一定不存在的数据会被这个bitmap拦截掉，从而避免了对底层存储系统的查询压力。</p>
+<p>另外也有一个更为简单粗暴的方法，如果一个查询返回的数据为空（不管是数据不存在，还是系统故障），我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。通过这个直接设置的默认值存放到缓存，这样第二次到缓冲中获取就有值了，而不会继续访问数据库，这种办法最简单粗暴！</p>
 
-<p>执行耗时20ms，explain结果：</p>
-<img src="/2019/04/15/2019-04-15-MySQL优化之index_merge/pic2.png">
 
-<h4 id="去掉对应检索项"><a href="#去掉对应检索项" class="headerlink" title="去掉对应检索项"></a>去掉对应检索项</h4><p>由于业务方面的考虑，没有对前几期survey_id检索的必要，顾项目中使用了这种方案。</p>
-<p>优化后的语句如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT `id`, `org_id`, `date`, `survey_id`, `send_num`, `reply_num`, </span><br><span class="line">...</span><br><span class="line">FROM `demo`</span><br><span class="line">WHERE `date` BETWEEN 20190312 AND 20190412 AND `org_id`=&apos;×&apos; AND `site_id`=&apos;×&apos;</span><br><span class="line">GROUP BY `date`, `survey_id`, `org_id` ORDER BY `date` DESC LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>把空结果，也给缓存起来，这样下次同样的请求就可以直接返回空了，即可以避免当查询的值为空时引起的缓存穿透。同时也可以单独设置个缓存区域存储空值，对要查询的key进行预先校验，然后再放行给后面的正常缓存处理逻辑。</p>
+<h3 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h3><p>缓存预热这个应该是一个比较常见的概念，相信很多小伙伴都应该可以很容易的理解，缓存预热就是系统上线后，将相关的缓存数据直接加载到缓存系统。这样就可以避免在用户请求的时候，先查询数据库，然后再将数据缓存的问题！用户直接查询事先被预热的缓存数据！</p>
+<p>针对上面的技术我特意整理了一下，如果想学习Java工程化、高性能及分布式、深入浅出。微服务、Spring，MyBatis，Netty源码分析的朋友可以加Java进阶群：582505643，群里有阿里大牛直播讲解技术，以及Java大型互联网开源技术的视频免费分享给大家。</p>
+<p>解决思路：</p>
+<ul>
+<li>直接写个缓存刷新页面，上线时手工操作下；</li>
+<li>数据量不大，可以在项目启动的时候自动进行加载；</li>
+<li>定时刷新缓存；</li>
+</ul>
+<h3 id="缓存更新"><a href="#缓存更新" class="headerlink" title="缓存更新"></a>缓存更新</h3><p>除了缓存服务器自带的缓存失效策略之外（Redis默认的有6中策略可供选择），我们还可以根据具体的业务需求进行自定义的缓存淘汰，常见的策略有两种：</p>
+<ul>
+<li>定时去清理过期的缓存；</li>
+<li>当有用户请求过来时，再判断这个请求所用到的缓存是否过期，过期的话就去底层系统得到新数据并更新缓存。</li>
+</ul>
+<p>两者各有优劣，第一种的缺点是维护大量缓存的key是比较麻烦的，第二种的缺点就是每次用户请求过来都要判断缓存失效，逻辑相对比较复杂！具体用哪种方案，大家可以根据自己的应用场景来权衡。</p>
+<h3 id="缓存降级"><a href="#缓存降级" class="headerlink" title="缓存降级"></a>缓存降级</h3><p>当访问量剧增、服务出现问题（如响应时间慢或不响应）或非核心服务影响到核心流程的性能时，仍然需要保证服务还是可用的，即使是有损服务。系统可以根据一些关键数据进行自动降级，也可以配置开关实现人工降级。</p>
+<p>降级的最终目的是保证核心服务可用，即使是有损的。而且有些服务是无法降级的（如加入购物车、结算）。</p>
+<p>在进行降级之前要对系统进行梳理，看看系统是不是可以丢卒保帅，从而梳理出哪些必须誓死保护，哪些可降级。</p>
+<p>比如可以参考日志级别设置预案：</p>
+<ul>
+<li>一般：比如有些服务偶尔因为网络抖动或者服务正在上线而超时，可以自动降级；</li>
+<li>警告：有些服务在一段时间内成功率有波动（如在95~100%之间），可以自动降级或人工降级，并发送告警；</li>
+<li>错误：比如可用率低于90%，或者数据库连接池被打爆了，或者访问量突然猛增到系统能承受的最大阀值，此时可以根据情况自动降级或者人工降级；</li>
+<li>严重错误：比如因为特殊原因数据错误了，此时需要紧急人工降级。</li>
+</ul>
 
-<p>执行耗时38ms，explain结果：</p>
-<img src="/2019/04/15/2019-04-15-MySQL优化之index_merge/pic3.png">
       
     </div>
     
@@ -526,11 +536,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag">MySQL</i></a>
+            <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag">Redis</i></a>
           
-            <a href="/tags/数据库/" rel="tag"><i class="fa fa-tag">数据库</i></a>
-          
-            <a href="/tags/数据库优化/" rel="tag"><i class="fa fa-tag">数据库优化</i></a>
+            <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag">分布式</i></a>
           
         </div>
       
@@ -543,8 +551,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/08/2019-04-08-深入学习Redis之集群/" rel="next" title="深入学习Redis之集群">
-                <i class="fa fa-chevron-left"></i> 深入学习Redis之集群
+              <a href="/2019/09/10/2019-09-10-一致性hash算法/" rel="next" title="一致性hash算法">
+                <i class="fa fa-chevron-left"></i> 一致性hash算法
               </a>
             
           </div>
@@ -552,10 +560,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/10/2019-05-10-常见Web安全攻防总结/" rel="prev" title="常见 Web 安全攻防总结">
-                常见 Web 安全攻防总结 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -802,7 +806,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#慢查询"><span class="nav-number">1.</span> <span class="nav-text">慢查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index-merge"><span class="nav-number">3.</span> <span class="nav-text">index_merge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">4.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#强制索引"><span class="nav-number">4.1.</span> <span class="nav-text">强制索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#去掉对应检索项"><span class="nav-number">4.2.</span> <span class="nav-text">去掉对应检索项</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存雪崩"><span class="nav-number">1.</span> <span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存穿透"><span class="nav-number">2.</span> <span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存预热"><span class="nav-number">3.</span> <span class="nav-text">缓存预热</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存更新"><span class="nav-number">4.</span> <span class="nav-text">缓存更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存降级"><span class="nav-number">5.</span> <span class="nav-text">缓存降级</span></a></li></ol></div>
             
 
           </div>
