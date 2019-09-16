@@ -96,25 +96,36 @@
 
 
 
-  <meta name="description" content="基于Reids的分布式锁">
-<meta name="keywords" content="Redis,分布式">
+  <meta name="description" content="到底什么是Hash一致性算法">
+<meta name="keywords" content="算法,分布式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="分布式锁">
-<meta property="og:url" content="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/index.html">
+<meta property="og:title" content="一致性hash算法">
+<meta property="og:url" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
-<meta property="og:description" content="基于Reids的分布式锁">
+<meta property="og:description" content="到底什么是Hash一致性算法">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-11T05:26:25.043Z">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic1.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic2.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic3.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic4.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic5.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic6.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic7.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic8.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic9.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic10.jpg">
+<meta property="og:updated_time" content="2019-09-16T09:17:34.263Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分布式锁">
-<meta name="twitter:description" content="基于Reids的分布式锁">
+<meta name="twitter:title" content="一致性hash算法">
+<meta name="twitter:description" content="到底什么是Hash一致性算法">
+<meta name="twitter:image" content="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/pic1.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/">
+  <link rel="canonical" href="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/">
 
 
 
@@ -124,7 +135,7 @@
   };
 </script>
 
-  <title>分布式锁 | JieSunn - BLOG</title>
+  <title>一致性hash算法 | JieSunn - BLOG</title>
   
 
 
@@ -362,7 +373,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/07/10/2019-07-10-分布式锁/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/07/10/2019-09-10-一致性hash算法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -379,7 +390,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">分布式锁
+          <h1 class="post-title" itemprop="name headline">一致性hash算法
 
               
             
@@ -458,75 +469,53 @@
       
 
       
-        <p><i class="fa fa-quote-left"></i> 基于Reids的分布式锁 <i class="fa fa-quote-right"></i></p>
+        <p><i class="fa fa-quote-left"></i> 到底什么是Hash一致性算法 <i class="fa fa-quote-right"></i></p>
 <a id="more"></a>
 
-<h3 id="什么是锁？"><a href="#什么是锁？" class="headerlink" title="什么是锁？"></a>什么是锁？</h3><ul>
-<li>在单进程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对代变量或代码块做同步，使其在修改这种变量时能够线性执行。</li>
-<li>而同步的本质是通过锁来实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做标记，这个标记必须每个线程都能看到，当标记不存在时可以设置标记，其余后续线程发现已有标记必须等待标记清除再去尝试设置。这个标记可以理解为锁。</li>
-<li>不同地方实现线程锁的方式也不一样，只要能满足所有线程都能看得到标记即可。如java中synchronize是在对象头设置标记，Lock接口的实现类基本上都只是某一个volitile修饰的int型变量其保证灭个线程都能拥有对该int的可见性和原子修改，linux内核中也是利用互斥量或信号量等内存数据做标记。</li>
-<li>除了利用内存数据做锁其实任何互斥的都能做锁（只考虑互斥情况），如流水表中流水号与时间结合做幂等校验可以看作是一个不会释放的锁，或者使用某个文件是否存在作为锁等。只需要满足在对标记进行修改能保证原子性和内存可见性即可。</li>
-</ul>
-<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>此处主要指集群模式下，多个相同服务同时开启。</p>
-<h4 id="分布式情况"><a href="#分布式情况" class="headerlink" title="分布式情况"></a>分布式情况</h4><ul>
-<li>分布式与单机情况下最大的不同在于其不是多线程而是多进程。</li>
-<li>多线程由于可以共享堆内存，因此可以简单的采取内存作为标记存储位置。而进程之间甚至可能都不在同一台物理机上，因此需要将标记存储在一个所有进程都能看到的地方。</li>
-</ul>
-<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><blockquote>
-<p>分布式锁是控制分布式系统或不同系统见之间访问共享资源的一种锁实现。如果不同的系统或同一个系统的不同主机之间共享了某个资源时，往往需要互斥来防止彼此干扰来保证一致性。</p>
-</blockquote>
-<ul>
-<li>当在分布式模型下，数据只有一份（或有限制），此时需要利用锁的技术控制某一时刻修改数据的进程数。</li>
-<li>与单机模式下的锁不仅需要保证进程可见，还需要考虑进程与锁之间的网络问题。</li>
-<li>分布式锁还是可以将标记存在内存，只是该内存不是某个进程分配的内存而是公共内存如Redis、Memcache。至于利用数据库、文件等做锁与单机的实现是一样的，只要保证标记能互斥就行。</li>
-</ul>
-<h3 id="锁实现"><a href="#锁实现" class="headerlink" title="锁实现"></a>锁实现</h3><h4 id="基于数据库"><a href="#基于数据库" class="headerlink" title="基于数据库"></a>基于数据库</h4><p>基于数据库的锁实现也有两种方式，一是基于数据库表，另一种是基于数据库排他锁。</p>
-<h5 id="基于数据库的增删"><a href="#基于数据库的增删" class="headerlink" title="基于数据库的增删"></a>基于数据库的增删</h5><p>基于数据库表增删是最简单的方式，首先创建一张锁的表主要包含下列字段：方法名，时间戳等字段。</p>
-<p>具体使用的方法，当需要锁住某个方法时，往该表中插入一条相关的记录。这边需要注意，方法名是有唯一性约束的，如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。</p>
-<p>执行完毕，需要delete该记录。</p>
-<p>当然，对于上述方案可以进行优化，如应用主从数据库，数据之间双向同步。一旦挂掉快速切换到备库上；做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍；使用while循环，直到insert成功再返回成功，虽然并不推荐这样做；还可以记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了，实现可重入锁。</p>
-<h5 id="基于数据库排他锁"><a href="#基于数据库排他锁" class="headerlink" title="基于数据库排他锁"></a>基于数据库排他锁</h5><p>我们还可以通过数据库的排他锁来实现分布式锁。基于MySql的InnoDB引擎，可以使用以下方法来实现加锁操作：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>&#123;</span><br><span class="line">    connection.setAutoCommit(<span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(count &lt; <span class="number">4</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            select * from lock where lock_name=xxx <span class="keyword">for</span> update;</span><br><span class="line">            <span class="keyword">if</span>(结果不为空)&#123;</span><br><span class="line">                <span class="comment">//代表获取到锁</span></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//为空或者抛异常的话都表示没有获取到锁</span></span><br><span class="line">        sleep(<span class="number">1000</span>);</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> LockException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Redis集群的使用"><a href="#Redis集群的使用" class="headerlink" title="Redis集群的使用"></a>Redis集群的使用</h3><p>我们在使用Redis的时候，为了保证Redis的高可用，提高Redis的读写性能，最简单的方式我们会做主从复制，组成Master-Master或者Master-Slave的形式，或者搭建Redis集群，进行数据的读写分离，类似于数据库的主从复制和读写分离。如下所示：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic1.jpg">
 
-<p>在查询语句后面增加for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。其他没有获取到锁的就会阻塞在上述select语句上，可能的结果有2种，在超时之前获取到了锁，在超时之前仍未获取到锁。</p>
-<p>获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，释放锁connection.commit()。</p>
-<p>存在的问题主要是性能不高和sql超时的异常。</p>
-<h5 id="基于数据库锁的优缺点"><a href="#基于数据库锁的优缺点" class="headerlink" title="基于数据库锁的优缺点"></a>基于数据库锁的优缺点</h5><p>上面两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。</p>
-<ul>
-<li>优点是直接借助数据库，简单容易理解。</li>
-<li>缺点是操作数据库需要一定的开销，性能问题需要考虑。</li>
-</ul>
-<h4 id="基于Zookeeper"><a href="#基于Zookeeper" class="headerlink" title="基于Zookeeper"></a>基于Zookeeper</h4><p>基于zookeeper临时有序节点可以实现的分布式锁。每个客户端对某个方法加锁时，在zookeeper上的与该方法对应的指定节点的目录下，生成一个唯一的瞬时有序节点。 判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。 当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。</p>
-<p>提供的第三方库有curator，具体使用读者可以自行去看一下。Curator提供的InterProcessMutex是分布式锁的实现。acquire方法获取锁，release方法释放锁。另外，锁释放、阻塞锁、可重入锁等问题都可以有有效解决。讲下阻塞锁的实现，客户端可以通过在ZK中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是就获取到锁，便可以执行业务逻辑。</p>
-<p>最后，Zookeeper实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK中创建和删除节点只能通过Leader服务器来执行，然后将数据同不到所有的Follower机器上。并发问题，可能存在网络抖动，客户端和ZK集群的session连接断了，zk集群以为客户端挂了，就会删除临时节点，这时候其他客户端就可以获取到分布式锁了。</p>
-<h4 id="基于Redis"><a href="#基于Redis" class="headerlink" title="基于Redis"></a>基于Redis</h4><p>相对于基于数据库实现分布式锁的方案来说，基于缓存来实现在性能方面会表现的更好一点，存取速度快很多。而且很多缓存是可以集群部署的，可以解决单点问题。基于缓存的锁有好几种，如memcached、redis、下面主要讲解基于redis的分布式实现。</p>
-<h5 id="SETNX"><a href="#SETNX" class="headerlink" title="SETNX"></a>SETNX</h5><p>使用redis的SETNX实现分布式锁，多个进程执行以下Redis命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETNX lock.id &lt;current Unix time + lock timeout + 1&gt;</span><br></pre></td></tr></table></figure>
+<p>同样类似于数据库，当单表数据大于500W的时候需要对其进行分库分表，当数据量很大的时候（标准可能不一样，要看Redis服务器容量）我们同样可以对Redis进行类似的操作，就是分库分表。</p>
+<p>假设，我们有一个社交网站，需要使用Redis存储图片资源，存储的格式为键值对，key值为图片名称，value为该图片所在文件服务器的路径，我们需要根据文件名查找该文件所在文件服务器上的路径，数据量大概有2000W左右，按照我们约定的规则进行分库，规则就是随机分配，我们可以部署8台缓存服务器，每台服务器大概含有500W条数据，并且进行主从复制，示意图如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic2.jpg">
 
-<p>SETNX是将 key 的值设为 value，当且仅当 key 不存在。若给定的 key 已经存在，则 SETNX 不做任何动作。</p>
-<ul>
-<li>返回1，说明该进程获得锁，SETNX将键 lock.id 的值设置为锁的超时时间，当前时间 +加上锁的有效时间。</li>
-<li>返回0，说明其他进程已经获得了锁，进程不能进入临界区。进程可以在一个循环中不断地尝试 SETNX 操作，以获得锁。</li>
-</ul>
-<h5 id="存在死锁的问题"><a href="#存在死锁的问题" class="headerlink" title="存在死锁的问题"></a>存在死锁的问题</h5><p>SETNX实现分布式锁，可能会存在死锁的情况。与单机模式下的锁相比，分布式环境下不仅需要保证进程可见，还需要考虑进程与锁之间的网络问题。某个线程获取了锁之后，断开了与Redis 的连接，锁没有及时释放，竞争该锁的其他线程都会hung，产生死锁的情况。</p>
-<p>在使用 SETNX 获得锁时，我们将键 lock.id 的值设置为锁的有效时间，线程获得锁后，其他线程还会不断的检测锁是否已超时，如果超时，等待的线程也将有机会获得锁。然而，锁超时，我们不能简单地使用 DEL 命令删除键 lock.id 以释放锁。</p>
-<p>考虑以下情况:</p>
-<ol>
-<li>A已经首先获得了锁 lock.id，然后线A断线。B,C都在等待竞争该锁；</li>
-<li>B,C读取lock.id的值，比较当前时间和键 lock.id 的值来判断是否超时，发现超时；</li>
-<li>B执行 DEL lock.id命令，并执行 SETNX lock.id 命令，并返回1，B获得锁；</li>
-<li>C由于各刚刚检测到锁已超时，执行 DEL lock.id命令，将B刚刚设置的键 lock.id 删除，执行 SETNX lock.id命令，并返回1，即C获得锁。</li>
-</ol>
-<p>上面的步骤很明显出现了问题，导致B,C同时获取了锁。在检测到锁超时后，线程不能直接简单地执行 DEL 删除键的操作以获得锁。对于上面的步骤进行改进，问题是出在删除键的操作上面，那么获取锁之后应该怎么改进呢？</p>
-<p>首先看一下redis的GETSET这个操作，GETSET key value，将给定 key 的值设为 value ，并返回 key 的旧值(old value)。利用这个操作指令，我们改进一下上述的步骤。</p>
-<ol>
-<li>A已经首先获得了锁 lock.id，然后线A断线。B,C都在等待竞争该锁；</li>
-<li>B,C读取lock.id的值，比较当前时间和键 lock.id 的值来判断是否超时，发现超时；</li>
-<li>B检测到锁已超时，即当前的时间大于键 lock.id 的值，B会执行GETSET lock.id &lt;current Unix timestamp + lock timeout + 1&gt;设置时间戳，通过比较键 lock.id 的旧值是否小于当前时间，判断进程是否已获得锁；</li>
-<li>B发现GETSET返回的值小于当前时间，则执行 DEL lock.id命令，并执行 SETNX lock.id 命令，并返回1，B获得锁；</li>
-<li>C执行GETSET得到的时间大于当前时间，则继续等待。</li>
-</ol>
-<p>在线程释放锁，即执行 DEL lock.id 操作前，需要先判断锁是否已超时。如果锁已超时，那么锁可能已由其他线程获得，这时直接执行 DEL lock.id 操作会导致把其他线程已获得的锁释放掉。</p>
+<p>由于规则是随机的，所有我们的一条数据都有可能存储在任何一组Redis中，例如上图我们用户查找一张名称为”a.png”的图片，由于规则是随机的，我们不确定具体是在哪一个Redis服务器上的，因此我们需要进行1、2、3、4，4次查询才能够查询到（也就是遍历了所有的Redis服务器），这显然不是我们想要的结果，有了解过的小伙伴可能会想到，随机的规则不行，可以使用类似于数据库中的分库分表规则：按照Hash值、取模、按照类别、按照某一个字段值等等常见的规则就可以出来了！好，按照我们的主题，我们就使用Hash的方式。</p>
+<h3 id="为Redis集群使用Hash"><a href="#为Redis集群使用Hash" class="headerlink" title="为Redis集群使用Hash"></a>为Redis集群使用Hash</h3><p>可想而知，如果我们使用Hash的方式，每一张图片在进行分库的时候都可以定位到特定的服务器，示意图如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic3.jpg">
+
+<p>上图中，假设我们查找的是”a.png”，由于有4台服务器（排除从库），因此公式为 <strong>hash(a.png) % 4 = 2</strong> ，可知定位到了第2号服务器，这样的话就不会遍历所有的服务器，大大提升了性能！</p>
+<h3 id="使用Hash的问题"><a href="#使用Hash的问题" class="headerlink" title="使用Hash的问题"></a>使用Hash的问题</h3><p>上述的方式虽然提升了性能，我们不再需要对整个Redis服务器进行遍历！但是，使用上述Hash算法进行缓存时，会出现一些缺陷，主要体现在服务器数量变动的时候，所有缓存的位置都要发生改变！</p>
+<p>试想一下，如果4台缓存服务器已经不能满足我们的缓存需求，那么我们应该怎么做呢？很简单，多增加几台缓存服务器不就行了！假设：我们增加了一台缓存服务器，那么缓存服务器的数量就由4台变成了5台。那么原本 <strong>hash(a.png) % 4 = 2</strong> 的公式就变成了 <strong>hash(a.png) % 5 = ？</strong> ， 可想而知这个结果肯定不是2的，这种情况带来的结果就是当服务器数量变动时，所有缓存的位置都要发生改变！换句话说，当服务器数量发生改变时，所有缓存在一定时间内是失效的，当应用无法从缓存中获取数据时，则会向后端数据库请求数据（还记得上一篇的《缓存雪崩》吗？）！</p>
+<p>同样的，假设4台缓存中突然有一台缓存服务器出现了故障，无法进行缓存，那么我们则需要将故障机器移除，但是如果移除了一台缓存服务器，那么缓存服务器数量从4台变为3台，也是会出现上述的问题！</p>
+<p>所以，我们应该想办法不让这种情况发生，但是由于上述Hash算法本身的缘故，使用取模法进行缓存时，这种情况是无法避免的，为了解决这些问题，Hash一致性算法（一致性Hash算法）诞生了！</p>
+<h3 id="一致性Hash算法的神秘面纱"><a href="#一致性Hash算法的神秘面纱" class="headerlink" title="一致性Hash算法的神秘面纱"></a>一致性Hash算法的神秘面纱</h3><p>一致性Hash算法也是使用取模的方法，只是，刚才描述的取模法是对服务器的数量进行取模，而一致性Hash算法是对2^32取模，什么意思呢？简单来说，一致性Hash算法将整个哈希值空间组织成一个虚拟的圆环，如假设某哈希函数H的值空间为0-2^32-1（即哈希值是一个32位无符号整形），整个哈希环如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic4.jpg">
+
+<p>整个空间按顺时针方向组织，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、5、6……直到2^32-1，也就是说0点左侧的第一个点代表2^32-1， 0和2^32-1在零点中方向重合，我们把这个由2^32个点组成的圆环称为Hash环。</p>
+<p>下一步将各个服务器使用Hash进行一个哈希，具体可以选择服务器的IP或主机名作为关键字进行哈希，这样每台机器就能确定其在哈希环上的位置，这里假设将上文中四台服务器使用IP地址哈希后在环空间的位置如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic5.jpg">
+
+<p>接下来使用如下算法定位数据访问到相应服务器：将数据key使用相同的函数Hash计算出哈希值，并确定此数据在环上的位置，从此位置沿环顺时针“行走”，第一台遇到的服务器就是其应该定位到的服务器！</p>
+<p>例如我们有Object A、Object B、Object C、Object D四个数据对象，经过哈希计算后，在环空间上的位置如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic6.jpg">
+
+<p>根据一致性Hash算法，数据A会被定为到Node A上，B被定为到Node B上，C被定为到Node C上，D被定为到Node D上。</p>
+<h3 id="一致性Hash算法的容错性和可扩展性"><a href="#一致性Hash算法的容错性和可扩展性" class="headerlink" title="一致性Hash算法的容错性和可扩展性"></a>一致性Hash算法的容错性和可扩展性</h3><p>现假设Node C不幸宕机，可以看到此时对象A、B、D不会受到影响，只有C对象被重定位到Node D。一般的，在一致性Hash算法中，如果一台服务器不可用，则受影响的数据仅仅是此服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据，其它不会受到影响，如下所示：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic7.jpg">
+
+<p>下面考虑另外一种情况，如果在系统中增加一台服务器Node X，如下图所示：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic8.jpg">
+
+<p>此时对象Object A、B、D不受影响，只有对象C需要重定位到新的Node X ！一般的，在一致性Hash算法中，如果增加一台服务器，则受影响的数据仅仅是新服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据，其它数据也不会受到影响。</p>
+<p>综上所述，一致性Hash算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性。</p>
+<h3 id="Hash环的数据倾斜问题"><a href="#Hash环的数据倾斜问题" class="headerlink" title="Hash环的数据倾斜问题"></a>Hash环的数据倾斜问题</h3><p>一致性Hash算法在服务节点太少时，容易因为节点分部不均匀而造成数据倾斜（被缓存的对象大部分集中缓存在某一台服务器上）问题，例如系统中只有两台服务器，其环分布如下：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic9.jpg">
+
+<p>此时必然造成大量数据集中到Node A上，而只有极少量会定位到Node B上。为了解决这种数据倾斜问题，一致性Hash算法引入了虚拟节点机制，即对每一个服务节点计算多个哈希，每个计算结果位置都放置一个此服务节点，称为虚拟节点。具体做法可以在服务器IP或主机名的后面增加编号来实现。</p>
+<p>例如上面的情况，可以为每台服务器计算三个虚拟节点，于是可以分别计算 “Node A#1”、“Node A#2”、“Node A#3”、“Node B#1”、“Node B#2”、“Node B#3”的哈希值，于是形成六个虚拟节点：</p>
+<img src="/2019/07/10/2019-09-10-一致性hash算法/pic10.jpg">
+
+<p>同时数据定位算法不变，只是多了一步虚拟节点到实际节点的映射，例如定位到“Node A#1”、“Node A#2”、“Node A#3”三个虚拟节点的数据均定位到Node A上。这样就解决了服务节点少时数据倾斜的问题。在实际应用中，通常将虚拟节点数设置为32甚至更大，因此即使很少的服务节点也能做到相对均匀的数据分布。</p>
 
       
     </div>
@@ -549,7 +538,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag">Redis</i></a>
+            <a href="/tags/算法/" rel="tag"><i class="fa fa-tag">算法</i></a>
           
             <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag">分布式</i></a>
           
@@ -686,9 +675,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -761,9 +748,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -827,7 +812,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是锁？"><span class="nav-number">1.</span> <span class="nav-text">什么是锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式"><span class="nav-number">2.</span> <span class="nav-text">分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式情况"><span class="nav-number">2.1.</span> <span class="nav-text">分布式情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式锁"><span class="nav-number">2.2.</span> <span class="nav-text">分布式锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁实现"><span class="nav-number">3.</span> <span class="nav-text">锁实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基于数据库"><span class="nav-number">3.1.</span> <span class="nav-text">基于数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库的增删"><span class="nav-number">3.1.1.</span> <span class="nav-text">基于数据库的增删</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库排他锁"><span class="nav-number">3.1.2.</span> <span class="nav-text">基于数据库排他锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于数据库锁的优缺点"><span class="nav-number">3.1.3.</span> <span class="nav-text">基于数据库锁的优缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Zookeeper"><span class="nav-number">3.2.</span> <span class="nav-text">基于Zookeeper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Redis"><span class="nav-number">3.3.</span> <span class="nav-text">基于Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SETNX"><span class="nav-number">3.3.1.</span> <span class="nav-text">SETNX</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#存在死锁的问题"><span class="nav-number">3.3.2.</span> <span class="nav-text">存在死锁的问题</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis集群的使用"><span class="nav-number">1.</span> <span class="nav-text">Redis集群的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为Redis集群使用Hash"><span class="nav-number">2.</span> <span class="nav-text">为Redis集群使用Hash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Hash的问题"><span class="nav-number">3.</span> <span class="nav-text">使用Hash的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性Hash算法的神秘面纱"><span class="nav-number">4.</span> <span class="nav-text">一致性Hash算法的神秘面纱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性Hash算法的容错性和可扩展性"><span class="nav-number">5.</span> <span class="nav-text">一致性Hash算法的容错性和可扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash环的数据倾斜问题"><span class="nav-number">6.</span> <span class="nav-text">Hash环的数据倾斜问题</span></a></li></ol></div>
             
 
           </div>
@@ -869,7 +854,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共143.8k字</span>
+  <span class="post-count">博客全站共143.1k字</span>
 </div>
 
         
