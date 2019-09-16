@@ -104,10 +104,15 @@
 <meta property="og:site_name" content="JieSunn - BLOG">
 <meta property="og:description" content="关于分布式Redis经常被问到的问题">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/pic1.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/pic2.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/pic3.jpg">
+<meta property="og:image" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/pic4.jpg">
 <meta property="og:updated_time" content="2019-09-16T10:30:51.185Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式缓存问题">
 <meta name="twitter:description" content="关于分布式Redis经常被问到的问题">
+<meta name="twitter:image" content="https://jiesunn.github.io/2019/09/15/2019-09-15-分布式缓存问题/pic1.jpg">
 
 
 
@@ -463,20 +468,20 @@
 
 <h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>缓存雪崩我们可以简单的理解为：由于原有缓存失效，新缓存未到期间(例如：我们设置缓存时采用了相同的过期时间，在同一时刻出现大面积的缓存过期)，所有原本应该访问缓存的请求都去查询数据库了，而对数据库CPU和内存造成巨大压力，严重的会造成数据库宕机。从而形成一系列连锁反应，造成整个系统崩溃。</p>
 <p>缓存正常从Redis中获取，示意图如下：</p>
-
+<img src="/2019/09/15/2019-09-15-分布式缓存问题/pic1.jpg">
 
 <p>缓存失效瞬间示意图如下：</p>
-
+<img src="/2019/09/15/2019-09-15-分布式缓存问题/pic2.jpg">
 
 <p>缓存失效时的雪崩效应对底层系统的冲击非常可怕！大多数系统设计者考虑用加锁或者队列的方式保证来保证不会有大量的线程对数据库一次性进行读写，从而避免失效时大量的并发请求落到底层存储系统上。还有一个简单方案就时讲缓存失效时间分散开，比如我们可以在原有的失效时间基础上增加一个随机值，比如1-5分钟随机，这样每一个缓存的过期时间的重复率就会降低，就很难引发集体失效的事件。</p>
 <p>以下简单介绍两种实现方式的伪代码：</p>
 <p>（1）碰到这种情况，一般并发量不是特别多的时候，使用最多的解决方案是加锁排队，伪代码如下：</p>
-
+<img src="/2019/09/15/2019-09-15-分布式缓存问题/pic3.jpg">
 
 <p>加锁排队只是为了减轻数据库的压力，并没有提高系统吞吐量。假设在高并发下，缓存重建期间key是锁着的，这是过来1000个请求999个都在阻塞的。同样会导致用户等待超时，这是个治标不治本的方法！</p>
 <p>注意：加锁排队的解决方式分布式环境的并发问题，有可能还要解决分布式锁的问题；线程还会被阻塞，用户体验很差！因此，在真正的高并发场景下很少使用！</p>
 <p>（2）还有一个解决办法解决方案是：给每一个缓存数据增加相应的缓存标记，记录缓存的是否失效，如果缓存标记失效，则更新数据缓存，实例伪代码如下：</p>
-
+<img src="/2019/09/15/2019-09-15-分布式缓存问题/pic4.jpg">
 
 <p>解释说明：</p>
 <ul>
