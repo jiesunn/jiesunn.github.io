@@ -96,27 +96,25 @@
 
 
 
-  <meta name="description" content="优化第一步，创建高性能索引">
-<meta name="keywords" content="MySQL,数据库,索引,数据库优化">
+  <meta name="description" content="五到七天给联系">
+<meta name="keywords" content="数据结构,Golang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL优化之创建高性能索引">
-<meta property="og:url" content="https://jiesunn.github.io/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/index.html">
+<meta property="og:title" content="网易互娱面经（秋招）">
+<meta property="og:url" content="https://jiesunn.github.io/2019/09/19/2019-09-17-网易互娱面经（秋招）/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
-<meta property="og:description" content="优化第一步，创建高性能索引">
+<meta property="og:description" content="五到七天给联系">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jiesunn.github.io/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/pic1.png">
-<meta property="og:updated_time" content="2019-09-09T04:59:41.556Z">
+<meta property="og:updated_time" content="2019-09-19T08:24:28.872Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MySQL优化之创建高性能索引">
-<meta name="twitter:description" content="优化第一步，创建高性能索引">
-<meta name="twitter:image" content="https://jiesunn.github.io/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/pic1.png">
+<meta name="twitter:title" content="网易互娱面经（秋招）">
+<meta name="twitter:description" content="五到七天给联系">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/">
+  <link rel="canonical" href="https://jiesunn.github.io/2019/09/19/2019-09-17-网易互娱面经（秋招）/">
 
 
 
@@ -126,7 +124,7 @@
   };
 </script>
 
-  <title>MySQL优化之创建高性能索引 | JieSunn - BLOG</title>
+  <title>网易互娱面经（秋招） | JieSunn - BLOG</title>
   
 
 
@@ -364,7 +362,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2019/09/19/2019-09-17-网易互娱面经（秋招）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -381,7 +379,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL优化之创建高性能索引
+          <h1 class="post-title" itemprop="name headline">网易互娱面经（秋招）
 
               
             
@@ -407,7 +405,7 @@
                 
               
 
-              <time title="创建时间：2018-08-31 11:15:29" itemprop="dateCreated datePublished" datetime="2018-08-31T11:15:29+08:00">2018-08-31</time>
+              <time title="创建时间：2019-09-19 16:04:07" itemprop="dateCreated datePublished" datetime="2019-09-19T16:04:07+08:00">2019-09-19</time>
             
 
             
@@ -425,7 +423,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
 
                 
                 
@@ -460,90 +458,25 @@
       
 
       
-        <p><i class="fa fa-quote-left"></i> 优化第一步，创建高性能索引 <i class="fa fa-quote-right"></i></p>
+        <p><i class="fa fa-quote-left"></i> 五到七天给联系 <i class="fa fa-quote-right"></i></p>
 <a id="more"></a>
 
-<h3 id="索引基础"><a href="#索引基础" class="headerlink" title="索引基础"></a>索引基础</h3><ol>
-<li><p>索引可以包含一个或多个列的值，如果索引包含多个列，那么列的顺序也十分重要，因为MySQL只能高效地使用索引的最左前缀列。</p>
-</li>
-<li><p>ORM工具能够产生符合逻辑的、合法的查询，除非只是生成非常基本的查询，否则它很难生成适合索引的查询。</p>
-</li>
-<li><p>在MySQL中，索引是在存储引擎层而不是服务器层实现的，所以，并没有统一的索引标准：不同存储引擎的索引的工作方式并不一样，也不是所有的存储引擎都支持所有类型的索引。</p>
-</li>
-<li><p>B-Tree意味着所有的值都是按顺序存储的，并且每一个叶子页到根的距离相同，能够加快访问数据的速度，从索引的根节点开始进行搜索，适用于全键值、键值范围或键前缀查找。</p>
-<img src="/2018/08/31/2018-08-31-MySQL优化之创建高性能索引/pic1.png"></li>
-<li><p>B-Tree索引的限制：</p>
-<ul>
-<li>如果不是按照索引的最左列开始查找，则无法使用索引</li>
-<li>不能跳过索引中的列</li>
-<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找</li>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前天收到的面试邮件邀请。</p>
+<h3 id="一面"><a href="#一面" class="headerlink" title="一面"></a>一面</h3><ul>
+<li>自我介绍</li>
+<li>挑一个最有亮点的项目讲讲</li>
+<li>进程、线程、协程的区别</li>
+<li>用协程一定比用线程效率高吗</li>
+<li>redis list的底层实现</li>
+<li>说说对称加密和非对称加密</li>
+<li>说说mysql索引</li>
+<li>组合索引</li>
+<li>如果一个文件每一行是一个用户id，求的用户id频率最高的top10（hash表+小顶堆）</li>
+<li>如果文件非常非常大，远大于内存呢？（切割文件+合并）</li>
+<li>设计一个数据结构，使得LRU的查找与删除时间复杂度为O(1)（双向链表+hash表）</li>
+<li>如果不用LRU，按访问次数删除呢？（双向链表+两个hash表）</li>
+<li>怎么减小交换？（双向链表+三个hash表）</li>
 </ul>
-</li>
-<li><p>哈希索引（hash index）基于哈希表实现，只有精确匹配索引所有列的查询才有效，只有Memory引擎显式支持哈希索引。</p>
-</li>
-<li><p>哈希索引的限制：</p>
-<ul>
-<li>哈希索引只包含哈希值和行指针，而不存储字段值，所以不能使用索引中的值来避免读取行</li>
-<li>哈希索引数据并不是按照索引值顺序存储的，所以也就无法用于排序</li>
-<li>哈希索引也不支持部分索引列匹配查找，因为哈希索引始终是使用索引列的全部内容来计算哈希值的</li>
-<li>只支持等值比较查询，不支持任何范围查询</li>
-<li>访问哈希索引的数据非常快，除非有很多哈希冲突</li>
-<li>如果哈希冲突很多的话，一些索引维护操作的代价也会很高</li>
-</ul>
-</li>
-<li><p>空间数据索引（R-Tree），MyISAM表支持空间索引，可以用作地理数据存储，开源数据库系统中对GIS的解决方案做得比较好的是PostgreSQL的PostGIS。</p>
-</li>
-<li><p>全文索引，适用于MATCH AGAINST操作，而不是普通的WHERE条件操作。</p>
-</li>
-</ol>
-<h3 id="索引优点"><a href="#索引优点" class="headerlink" title="索引优点"></a>索引优点</h3><ol>
-<li>三个优点：<ul>
-<li>索引大大减少了服务器需要扫描的数据量</li>
-<li>索引可以帮助服务器避免排序和临时表</li>
-<li>索引可以将随机I/O变为顺序I/O</li>
-</ul>
-</li>
-<li>索引三星系统：<ul>
-<li>索引将相关的记录放到一起则获得一星</li>
-<li>如果索引中的数据顺序和查找中的排序一致则获得二星</li>
-<li>如果索引中的列包含了查询中需要的全部列则获得三星</li>
-</ul>
-</li>
-</ol>
-<h3 id="高性能索引策略"><a href="#高性能索引策略" class="headerlink" title="高性能索引策略"></a>高性能索引策略</h3><ol>
-<li>独立的列：如果查询中的列不是独立的，则MySQL不会使用索引。“独立的列”是指索引列不能是表达式的一部分，也不能是函数的参数</li>
-<li>前缀索引和索引选择性：<ul>
-<li>通常可以索引开始的部分字符，可以大大节约索引空间，但也会降低索引的选择性</li>
-<li>索引的选择性是指，不重复的索引值（也称为基数，cardinality）和数据表的记录总数（#T）的比值，范围从1/#T到1之间，选择性越高则查询效率越高，因为选择性高的索引可以让MySQL在查找时过滤掉更多的行</li>
-<li>MySQL无法使用前缀索引做ORDERY BY和GROUP BY，也无法做覆盖扫描</li>
-</ul>
-</li>
-<li>选择合适的索引列顺序：<ul>
-<li>正确的索引列顺序依赖于使用该索引的查询，并且同时需要考虑如何更好地满足排序和分组的需要</li>
-<li>在一个多列B-Tree索引中，索引列的顺序意味着索引首先按照最左列进行排序，其次是第二列</li>
-<li>将选择性最高的列放到索引最前列</li>
-</ul>
-</li>
-<li>聚簇索引（并不是一种单独的索引类型，而是一种数据存储方式）<ul>
-<li>最好避免随机的（不连续且值的分布范围非常大）聚簇索引，特别是对于I/O密集型的应用</li>
-</ul>
-</li>
-<li>覆盖索引：如果一个索引包含（或者说覆盖）所有需要查询的字段的值，就称为覆盖索引<ul>
-<li>覆盖索引必须要存储索引列的值</li>
-</ul>
-</li>
-<li>如果EXPLAIN出来的type列的值为“index”，则说明MySQL使用了索引扫描来做排序</li>
-<li>压缩（前缀）索引，默认只压缩字符串，减少索引大小，对于CPU密集型应用，因为扫描需要随机查找，压缩索引在MyISAM上要慢好几倍</li>
-<li>重复索引是指在相同的列上按照相同的顺序创建的相同类型的索引，应该避免这样创建重复索引</li>
-<li>索引可以让查询锁定更少的行</li>
-</ol>
-<h4 id="维护索引和表"><a href="#维护索引和表" class="headerlink" title="维护索引和表"></a>维护索引和表</h4><ol>
-<li>CHECK TABLE检查表是否损坏，ALTER TABLE innodb_tb1 ENGINE=INNODB;修复表</li>
-<li>records_in_range()通过向存储引擎传入两个边界值获取在这个范围大概有多少条记录，对于innodb不精确</li>
-<li>info()返回各种类型的数据，包括索引的基数</li>
-<li>可以使用SHOW INDEX FROM命令来查看索引的基数</li>
-<li>B-Tree索引可能会碎片化，这会降低查询的效率</li>
-</ol>
 
       
     </div>
@@ -566,13 +499,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag">MySQL</i></a>
+            <a href="/tags/数据结构/" rel="tag"><i class="fa fa-tag">数据结构</i></a>
           
-            <a href="/tags/数据库/" rel="tag"><i class="fa fa-tag">数据库</i></a>
-          
-            <a href="/tags/索引/" rel="tag"><i class="fa fa-tag">索引</i></a>
-          
-            <a href="/tags/数据库优化/" rel="tag"><i class="fa fa-tag">数据库优化</i></a>
+            <a href="/tags/Golang/" rel="tag"><i class="fa fa-tag">Golang</i></a>
           
         </div>
       
@@ -585,8 +514,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/21/2018-08-21-InnoDB的Page结构/" rel="next" title="InnoDB的Page结构">
-                <i class="fa fa-chevron-left"></i> InnoDB的Page结构
+              <a href="/2019/09/17/2019-09-17-Golang的Map实现/" rel="next" title="Golang的Map实现">
+                <i class="fa fa-chevron-left"></i> Golang的Map实现
               </a>
             
           </div>
@@ -594,10 +523,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/01/2018-09-01-MySQL优化之查询性能优化/" rel="prev" title="MySQL优化之查询性能优化">
-                MySQL优化之查询性能优化 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -848,7 +773,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#索引基础"><span class="nav-number">1.</span> <span class="nav-text">索引基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引优点"><span class="nav-number">2.</span> <span class="nav-text">索引优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能索引策略"><span class="nav-number">3.</span> <span class="nav-text">高性能索引策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#维护索引和表"><span class="nav-number">3.1.</span> <span class="nav-text">维护索引和表</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一面"><span class="nav-number">2.</span> <span class="nav-text">一面</span></a></li></ol></div>
             
 
           </div>
