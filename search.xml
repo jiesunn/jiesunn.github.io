@@ -988,9 +988,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> 存储引擎 </tag>
-            
             <tag> InnoDB </tag>
+            
+            <tag> 存储引擎 </tag>
             
             <tag> 数据结构 </tag>
             
@@ -1021,9 +1021,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> 存储引擎 </tag>
-            
             <tag> InnoDB </tag>
+            
+            <tag> 存储引擎 </tag>
             
             <tag> 索引 </tag>
             
@@ -1094,37 +1094,6 @@
     
     
     <entry>
-      <title>MySQL索引实现</title>
-      <link href="/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/"/>
-      <url>/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/</url>
-      
-        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> 不同存储引擎如何实现索引 <i class="fa fa-quote-right"></i></p><a id="more"></a><h3 id="关于存储引擎"><a href="#关于存储引擎" class="headerlink" title="关于存储引擎"></a>关于存储引擎</h3><p>MySQL的常用存储引擎有四种，下面只讨论其中最多的两种——MyISAM和InnoDB实现索引的方式。</p><p>有关存储引擎的详细说明，请查看<a href="/todo">MySQL的四种存储引擎</a>。</p><h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。</p><p>下图是MyISAM索引的原理图：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic1.png"><p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。</p><p>如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic2.png"><p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p><p>MyISAM的索引方式也叫做<strong>非聚集索引</strong>。</p><h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p><p>第一个重大区别是InnoDB的数据文件本身就是索引文件。</p><p>从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic3.png"><p>上图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做<strong>聚集索引</strong>。</p><p>因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p><p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。</p><p>例如，下图为定义在Col3上的一个辅助索引：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic4.png"><p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p><p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p><h3 id="比较区别"><a href="#比较区别" class="headerlink" title="比较区别"></a>比较区别</h3><p>其实上面已经说的很明白了，下面简要概述一下区别：</p><ul><li>MyISAM的索引和数据是分开存储在两个文件的，索引的数据域存储指向数据的指针；InnoDB的索引和数据存储在一个文件中，索引的数据域存储数据本身。</li><li>MyISAM的辅助索引（二级索引）结构与主索引基本一致，但不用保证唯一性；InnoDB辅助索引的数据域存储主键的值。</li></ul><p>下面的图可以比较清晰的比较两者的不同：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic5.png">]]></content>
-      
-      
-      <categories>
-          
-          <category> 数据库 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> MySQL </tag>
-            
-            <tag> 数据库 </tag>
-            
-            <tag> 存储引擎 </tag>
-            
-            <tag> 索引 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>索引背后的数据结构与算法</title>
       <link href="/2018/08/16/2018-08-16-%E7%B4%A2%E5%BC%95%E8%83%8C%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
       <url>/2018/08/16/2018-08-16-%E7%B4%A2%E5%BC%95%E8%83%8C%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</url>
@@ -1148,6 +1117,37 @@
             <tag> 索引 </tag>
             
             <tag> 数据结构 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MySQL索引实现</title>
+      <link href="/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/"/>
+      <url>/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> 不同存储引擎如何实现索引 <i class="fa fa-quote-right"></i></p><a id="more"></a><h3 id="关于存储引擎"><a href="#关于存储引擎" class="headerlink" title="关于存储引擎"></a>关于存储引擎</h3><p>MySQL的常用存储引擎有四种，下面只讨论其中最多的两种——MyISAM和InnoDB实现索引的方式。</p><p>有关存储引擎的详细说明，请查看<a href="/todo">MySQL的四种存储引擎</a>。</p><h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。</p><p>下图是MyISAM索引的原理图：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic1.png"><p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。</p><p>如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic2.png"><p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p><p>MyISAM的索引方式也叫做<strong>非聚集索引</strong>。</p><h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p><p>第一个重大区别是InnoDB的数据文件本身就是索引文件。</p><p>从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic3.png"><p>上图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做<strong>聚集索引</strong>。</p><p>因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p><p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。</p><p>例如，下图为定义在Col3上的一个辅助索引：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic4.png"><p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p><p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p><h3 id="比较区别"><a href="#比较区别" class="headerlink" title="比较区别"></a>比较区别</h3><p>其实上面已经说的很明白了，下面简要概述一下区别：</p><ul><li>MyISAM的索引和数据是分开存储在两个文件的，索引的数据域存储指向数据的指针；InnoDB的索引和数据存储在一个文件中，索引的数据域存储数据本身。</li><li>MyISAM的辅助索引（二级索引）结构与主索引基本一致，但不用保证唯一性；InnoDB辅助索引的数据域存储主键的值。</li></ul><p>下面的图可以比较清晰的比较两者的不同：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic5.png">]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+            <tag> 数据库 </tag>
+            
+            <tag> 存储引擎 </tag>
+            
+            <tag> 索引 </tag>
             
         </tags>
       
