@@ -1753,7 +1753,7 @@ pre .javascript .function {
   padding: 2px;
   max-width: 120px;
   height: auto;
-  border: 1px solid #eee;
+/*border: $site-author-image-border-width solid $site-author-image-border-color;*/
 /* 头像圆形 */
   border-radius: 80px;
   -webkit-border-radius: 80px;
@@ -1907,7 +1907,7 @@ img:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #49b11b;
+  background: #5cffd9;
 }
 .links-of-blogroll {
   margin-top: 10px;
