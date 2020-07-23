@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>分布式任务调度平台</title>
+      <link href="/2020/07/23/2020-07-23-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B9%B3%E5%8F%B0/"/>
+      <url>/2020/07/23/2020-07-23-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B9%B3%E5%8F%B0/</url>
+      
+        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> 分布式系统的定时任务管理监控 <i class="fa fa-quote-right"></i></p><a id="more"></a><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>定时任务是程序员不可避免的话题，很多业务场景需要我们某一特定的时刻去做某件任务。项目开发中，常常以下场景需要分布式任务调度：   </p><ul><li>同一服务多个实例的任务存在互斥时，需要统一协调</li><li>定时任务的执行需要支持高可用、监控运维、故障告警</li><li>需要统一管理和追踪各个服务节点定时任务的运行情况，以及任务属性信息，例如任务所属服务、所属责任人</li></ul><p>一般来说，系统可以使用消息传递代替部分定时任务（比如商品成功发货后，需要向客户发送短信提醒），两者有很多相似之处，一些场景下也可以相互替换，但是有一些不能：</p><ul><li><strong>时间驱动 / 事件驱动：</strong> 内部系统一般可以通过事件来驱动，但如果涉及到外部系统，则只能使用时间驱动。如爬取外部网站价格，每小时爬一次。</li><li><strong>批量处理/ 逐条处理：</strong> 批量处理堆积的数据更加高效，在不需要实时性的情况下比消息中间件更有优势。而且有的业务逻辑只能批量处理，如移动每个月结算我们的花费。</li><li><strong>实时性/ 非实时性：</strong> 消息中间件能够做到实时处理数据，但是有些情况下并不需要实时，比如：vip 升级。</li><li><strong>系统内部/ 系统解耦：</strong> 定时任务调度一般是在系统内部，而消息中间件可用于两个系统间</li></ul><p>并且对于分布式系统来说，如果处理不当，会存在同一系统不同节点之间定时任务相互影响的问题，再考虑上监控、日志、信息面板，加上不同系统之间管理维护的问题，自己实现一套的成本又上来了..所以我们可以考虑一些比较成熟的任务调度平台来使用。</p><p>工作中业务场景非常多，所涉及到的场景也各不相同，这使得我们定时任务系统应该集管理、调度、任务分配、监控预警为一体的综合调度系统,如何打造一套健壮的、适应不同场景的系统，技术选型尤其重要。</p><p>针对以上场景我们需要我们的分布式任务系统具备以下能力：</p><ol><li>支持多种作业类型(shell作业/Java作业)</li><li>支持作业HA，负载均衡和失败转移</li><li>支持弹性扩容(应对开门红以及促销活动)</li><li>支持Job Timeout 处理</li><li>支持统一监控和告警</li><li>支持作业统一配置</li><li>支持资源隔离和作业隔离</li></ol><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>任务调度就是设点某一时间点自动触发的任务，该任务可以在时间规律上去循环执行。一般的技术quartz、spring task、java.util.Timer，这几种如果在单一机器上跑其实问题不大，但是如果一旦应用于集群环境做分布式部署，就会带来一个致命的问题，那就是重复执行，当然解决方案有，但是必须依赖数据库，将任务执行状态持久化下来。</p><p>特点：</p><ul><li>时间驱动：系统一般可以通过时间来驱动，定时定点定次。</li><li>批量处理：批量处理堆积的数据更加高效，在不需要实时性的情况下比消息中间件更有优势。而且有的业务逻辑只能批量处理。如对账批处理、资金管理系统回盘、部分银行的报盘前的制盘</li><li>非实时性：定时任务不要求实时性，一般不用于C端用户的交互，更多的用于业务数据的处理</li><li>隔离性/专一性：可以跟其他系统分离，只关注业务数据的处理，不影响用户的操作和用户系统的性能。</li></ul><h3 id="框架对比"><a href="#框架对比" class="headerlink" title="框架对比"></a>框架对比</h3><h4 id="Quartz"><a href="#Quartz" class="headerlink" title="Quartz"></a>Quartz</h4><p>Java事实上的定时任务标准。但Quartz关注点在于定时任务而非数据，并无一套根据数据处理而定制化的流程。虽然Quartz可以基于数据库实现作业的高可用，但缺少分布式并行调度的功能。</p><h4 id="TBSchedule"><a href="#TBSchedule" class="headerlink" title="TBSchedule"></a>TBSchedule</h4><p>阿里早期开源的分布式任务调度系统。代码略陈旧，使用timer而非线程池执行任务调度。众所周知，timer在处理异常状况时是有缺陷的。而且TBSchedule作业类型较为单一，只能是获取/处理数据一种模式。还有就是文档缺失比较严重。</p><h4 id="Elastic-job"><a href="#Elastic-job" class="headerlink" title="Elastic-job"></a>Elastic-job</h4><p>当当开发的弹性分布式任务调度系统，功能丰富强大，采用zookeeper实现分布式协调，实现任务高可用以及分片，目前是版本2.15，并且可以支持云开发，目前是版本2.15，现在已经不在更新。</p><h4 id="Saturn"><a href="#Saturn" class="headerlink" title="Saturn"></a>Saturn</h4><p>唯品会自主研发的分布式的定时任务的调度平台，Saturn (任务调度系统)是唯品会开源的一个分布式任务调度平台，取代传统的Linux Cron/Spring Batch Job的方式，做到全域统一配置，统一监控，任务高可用以及分片并发处理。Saturn是在当当开源的Elastic Job基础上，结合各方需求和我们的实践见解改良而成，最新发布版本V3.3.1(2019年1月18日)，最新测试版本V3.3.3.1。使用案例 唯品会、酷狗音乐、新网银行、海融易、航美在线、量富征信 </p><h4 id="xxl-job"><a href="#xxl-job" class="headerlink" title="xxl-job"></a>xxl-job</h4><p>大众点评员工徐雪里于2015年发布的分布式任务调度平台，是一个轻量级分布式任务调度框架，其核心设计目标是开发迅速、学习简单、轻量级、易扩展,最新发布版本V2.0.2(2019.4.20日)，其在唯品会内部已经发部署350+个节点，每天任务调度4000多万次。同时，管理和统计也是它的亮点。使用案例 大众点评、易信(IM)、京东(电商系统)、360金融(金融系统)、易企秀、随行付(支付系统)、优信二手车</p><p>GitHub：<a href="https://github.com/xuxueli/xxl-job" target="_blank" rel="noopener">分布式任务调度平台XXL-JOB</a><br>文档：<a href="https://github.com/xuxueli/xxl-job/blob/master/doc/XXL-JOB%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3.md" target="_blank" rel="noopener">XXL-JOB官方文档.md</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 分布式 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>百度面经（秋招）</title>
       <link href="/2019/09/22/2019-09-22-%E7%99%BE%E5%BA%A6%E9%9D%A2%E7%BB%8F%EF%BC%88%E7%A7%8B%E6%8B%9B%EF%BC%89/"/>
       <url>/2019/09/22/2019-09-22-%E7%99%BE%E5%BA%A6%E9%9D%A2%E7%BB%8F%EF%BC%88%E7%A7%8B%E6%8B%9B%EF%BC%89/</url>
@@ -988,9 +1013,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> InnoDB </tag>
-            
             <tag> 存储引擎 </tag>
+            
+            <tag> InnoDB </tag>
             
             <tag> 数据结构 </tag>
             
@@ -1021,9 +1046,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> InnoDB </tag>
-            
             <tag> 存储引擎 </tag>
+            
+            <tag> InnoDB </tag>
             
             <tag> 索引 </tag>
             
@@ -1094,37 +1119,6 @@
     
     
     <entry>
-      <title>MySQL索引实现</title>
-      <link href="/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/"/>
-      <url>/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/</url>
-      
-        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> 不同存储引擎如何实现索引 <i class="fa fa-quote-right"></i></p><a id="more"></a><h3 id="关于存储引擎"><a href="#关于存储引擎" class="headerlink" title="关于存储引擎"></a>关于存储引擎</h3><p>MySQL的常用存储引擎有四种，下面只讨论其中最多的两种——MyISAM和InnoDB实现索引的方式。</p><p>有关存储引擎的详细说明，请查看<a href="/todo">MySQL的四种存储引擎</a>。</p><h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。</p><p>下图是MyISAM索引的原理图：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic1.png"><p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。</p><p>如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic2.png"><p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p><p>MyISAM的索引方式也叫做<strong>非聚集索引</strong>。</p><h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p><p>第一个重大区别是InnoDB的数据文件本身就是索引文件。</p><p>从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic3.png"><p>上图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做<strong>聚集索引</strong>。</p><p>因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p><p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。</p><p>例如，下图为定义在Col3上的一个辅助索引：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic4.png"><p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p><p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p><h3 id="比较区别"><a href="#比较区别" class="headerlink" title="比较区别"></a>比较区别</h3><p>其实上面已经说的很明白了，下面简要概述一下区别：</p><ul><li>MyISAM的索引和数据是分开存储在两个文件的，索引的数据域存储指向数据的指针；InnoDB的索引和数据存储在一个文件中，索引的数据域存储数据本身。</li><li>MyISAM的辅助索引（二级索引）结构与主索引基本一致，但不用保证唯一性；InnoDB辅助索引的数据域存储主键的值。</li></ul><p>下面的图可以比较清晰的比较两者的不同：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic5.png">]]></content>
-      
-      
-      <categories>
-          
-          <category> 数据库 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> MySQL </tag>
-            
-            <tag> 数据库 </tag>
-            
-            <tag> 存储引擎 </tag>
-            
-            <tag> 索引 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>索引背后的数据结构与算法</title>
       <link href="/2018/08/16/2018-08-16-%E7%B4%A2%E5%BC%95%E8%83%8C%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
       <url>/2018/08/16/2018-08-16-%E7%B4%A2%E5%BC%95%E8%83%8C%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</url>
@@ -1148,6 +1142,37 @@
             <tag> 索引 </tag>
             
             <tag> 数据结构 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MySQL索引实现</title>
+      <link href="/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/"/>
+      <url>/2018/08/16/2018-08-17-MySQL%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> 不同存储引擎如何实现索引 <i class="fa fa-quote-right"></i></p><a id="more"></a><h3 id="关于存储引擎"><a href="#关于存储引擎" class="headerlink" title="关于存储引擎"></a>关于存储引擎</h3><p>MySQL的常用存储引擎有四种，下面只讨论其中最多的两种——MyISAM和InnoDB实现索引的方式。</p><p>有关存储引擎的详细说明，请查看<a href="/todo">MySQL的四种存储引擎</a>。</p><h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。</p><p>下图是MyISAM索引的原理图：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic1.png"><p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。</p><p>如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic2.png"><p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p><p>MyISAM的索引方式也叫做<strong>非聚集索引</strong>。</p><h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p><p>第一个重大区别是InnoDB的数据文件本身就是索引文件。</p><p>从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic3.png"><p>上图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做<strong>聚集索引</strong>。</p><p>因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p><p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。</p><p>例如，下图为定义在Col3上的一个辅助索引：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic4.png"><p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p><p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p><h3 id="比较区别"><a href="#比较区别" class="headerlink" title="比较区别"></a>比较区别</h3><p>其实上面已经说的很明白了，下面简要概述一下区别：</p><ul><li>MyISAM的索引和数据是分开存储在两个文件的，索引的数据域存储指向数据的指针；InnoDB的索引和数据存储在一个文件中，索引的数据域存储数据本身。</li><li>MyISAM的辅助索引（二级索引）结构与主索引基本一致，但不用保证唯一性；InnoDB辅助索引的数据域存储主键的值。</li></ul><p>下面的图可以比较清晰的比较两者的不同：</p><img src="/2018/08/16/2018-08-17-MySQL索引实现/pic5.png">]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+            <tag> 数据库 </tag>
+            
+            <tag> 存储引擎 </tag>
+            
+            <tag> 索引 </tag>
             
         </tags>
       
@@ -1394,9 +1419,9 @@
       
         <tags>
             
-            <tag> web </tag>
-            
             <tag> 会话机制 </tag>
+            
+            <tag> web </tag>
             
         </tags>
       
