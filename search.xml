@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>新人培训之Linux小作业</title>
+      <link href="/2020/07/31/2020-07-31-%E6%96%B0%E4%BA%BA%E5%9F%B9%E8%AE%AD%E4%B9%8BLinux%E5%B0%8F%E4%BD%9C%E4%B8%9A/"/>
+      <url>/2020/07/31/2020-07-31-%E6%96%B0%E4%BA%BA%E5%9F%B9%E8%AE%AD%E4%B9%8BLinux%E5%B0%8F%E4%BD%9C%E4%B8%9A/</url>
+      
+        <content type="html"><![CDATA[<p><i class="fa fa-quote-left"></i> Linux操作系统 <i class="fa fa-quote-right"></i></p><a id="more"></a><p><strong>1、是否能用管道做大数据量的通信，为什么？</strong></p><blockquote><p>能，管道是在内核的一块缓冲区，由文件系统的高速缓冲区构成，虽然管道容量有限，但是合理分段的情况下可以较高效的传递大量数据</p></blockquote><p><strong>2、写程序验证信号处理函数是否会被子进程继承</strong></p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handler</span><span class="params">(<span class="keyword">int</span> signum)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"this signal is %d\n"</span>, signum);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置信号处理函数</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sa_usr</span>;</span></span><br><span class="line">    sa_usr.sa_flags = <span class="number">0</span>;</span><br><span class="line">    sa_usr.sa_handler = handler;</span><br><span class="line">    sigaction(SIGINT, &amp;sa_usr, <span class="literal">NULL</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">pid_t</span> pid = <span class="number">0</span>;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;&#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"father\n"</span>);</span><br><span class="line">        kill(pid, SIGINT);  <span class="comment">// 发送信号</span></span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        kill(pid, SIGKILL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><blockquote><p>以上程序的运行结果是：</p><p>child<br>father<br>this signal is 2</p><p>所以，子进程会继承父进程的信号处理函数</p></blockquote><p><strong>3、分析cd命令是否会fork进程执行（需要写出分析过程）</strong></p><blockquote><p>不会，cd命令会在shell启动时被加载并驻留在系统内存，因此不需要衍生出一个子进程</p></blockquote><p><strong>4、关闭TCP连接时，为什么所绑定的端要处于TIME_WAIT状态2msl后才进入CLOSED状态，请解释TIME_WAIT状态的作用</strong></p><blockquote><p>保证连接能可靠关闭：若对方在超时时间内没有收到ACK，则会重发FIN，而所绑定的端如果不等待2msl，则收不到重复的FIN；</p><p>保证本次连接的数据消失：在某些极端情况下，新的TCP连接不会混淆数据包。</p></blockquote><p><strong>5、使用python+gprof2dot/FlameGraph分析一个应用程序。分析程序的调用情况，找出耗时的代码块。</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(n)</span>:</span> </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo1</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i):</span><br><span class="line">            foo(j)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo2</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            foo(j)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">t</span><span class="params">()</span>:</span></span><br><span class="line">    time.sleep(<span class="number">0.001</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    foo(<span class="number">100</span>)</span><br><span class="line">    foo1(<span class="number">100</span>)</span><br><span class="line">    foo2(<span class="number">100</span>)</span><br><span class="line">    t()</span><br></pre></td></tr></table></figure><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m cProfile -o test_gprof2dot.pstats test_gprof2dot.py</span><br><span class="line">python -m gprof2dot -f pstats test_gprof2dot.pstats | dot -T png -o test_gprof2dot.png</span><br></pre></td></tr></table></figure><blockquote><p>得到的程序调用图如下，可以看到最耗时的是被调用了14951次的foo方法，其次是调用了foo方法10000次的foo2方法，再其次是调用了foo方法4950次的foo1方法，最后是1ms的sleep。</p></blockquote><img src="/2020/07/31/2020-07-31-新人培训之Linux小作业/test_gprof2dot.png">]]></content>
+      
+      
+      <categories>
+          
+          <category> 新人培训 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 操作系统 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>新人培训之Web安全小作业</title>
       <link href="/2020/07/28/2020-07-28-%E6%96%B0%E4%BA%BA%E5%9F%B9%E8%AE%AD%E4%B9%8BWeb%E5%AE%89%E5%85%A8%E5%B0%8F%E4%BD%9C%E4%B8%9A/"/>
       <url>/2020/07/28/2020-07-28-%E6%96%B0%E4%BA%BA%E5%9F%B9%E8%AE%AD%E4%B9%8BWeb%E5%AE%89%E5%85%A8%E5%B0%8F%E4%BD%9C%E4%B8%9A/</url>
@@ -1038,9 +1063,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> InnoDB </tag>
-            
             <tag> 存储引擎 </tag>
+            
+            <tag> InnoDB </tag>
             
             <tag> 数据结构 </tag>
             
@@ -1071,9 +1096,9 @@
             
             <tag> 数据库 </tag>
             
-            <tag> InnoDB </tag>
-            
             <tag> 存储引擎 </tag>
+            
+            <tag> InnoDB </tag>
             
             <tag> 索引 </tag>
             

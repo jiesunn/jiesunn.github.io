@@ -96,28 +96,27 @@
 
 
 
-  <meta name="description" content="MySQL常见的三种存储引擎">
-<meta name="keywords" content="MySQL,数据库,存储引擎">
+  <meta name="description" content="Linux操作系统">
+<meta name="keywords" content="操作系统">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL存储引擎">
-<meta property="og:url" content="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/index.html">
+<meta property="og:title" content="新人培训之Linux小作业">
+<meta property="og:url" content="https://jiesunn.github.io/2020/07/31/2020-07-31-新人培训之Linux小作业/index.html">
 <meta property="og:site_name" content="JieSunn - BLOG">
-<meta property="og:description" content="MySQL常见的三种存储引擎">
+<meta property="og:description" content="Linux操作系统">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/pic1.png">
-<meta property="og:image" content="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/pic2.png">
-<meta property="og:updated_time" content="2019-09-09T04:59:41.540Z">
+<meta property="og:image" content="https://jiesunn.github.io/2020/07/31/2020-07-31-新人培训之Linux小作业/test_gprof2dot.png">
+<meta property="og:updated_time" content="2020-08-03T03:03:18.618Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MySQL存储引擎">
-<meta name="twitter:description" content="MySQL常见的三种存储引擎">
-<meta name="twitter:image" content="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/pic1.png">
+<meta name="twitter:title" content="新人培训之Linux小作业">
+<meta name="twitter:description" content="Linux操作系统">
+<meta name="twitter:image" content="https://jiesunn.github.io/2020/07/31/2020-07-31-新人培训之Linux小作业/test_gprof2dot.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/">
+  <link rel="canonical" href="https://jiesunn.github.io/2020/07/31/2020-07-31-新人培训之Linux小作业/">
 
 
 
@@ -127,7 +126,7 @@
   };
 </script>
 
-  <title>MySQL存储引擎 | JieSunn - BLOG</title>
+  <title>新人培训之Linux小作业 | JieSunn - BLOG</title>
   
 
 
@@ -365,7 +364,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2018/08/12/2018-08-12-MySQL存储引擎/">
+    <link itemprop="mainEntityOfPage" href="https://jiesunn.github.io/2020/07/31/2020-07-31-新人培训之Linux小作业/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JieSunn">
@@ -382,7 +381,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL存储引擎
+          <h1 class="post-title" itemprop="name headline">新人培训之Linux小作业
 
               
             
@@ -408,7 +407,7 @@
                 
               
 
-              <time title="创建时间：2018-08-12 21:19:41" itemprop="dateCreated datePublished" datetime="2018-08-12T21:19:41+08:00">2018-08-12</time>
+              <time title="创建时间：2020-07-31 16:21:02" itemprop="dateCreated datePublished" datetime="2020-07-31T16:21:02+08:00">2020-07-31</time>
             
 
             
@@ -426,7 +425,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/新人培训/" itemprop="url" rel="index"><span itemprop="name">新人培训</span></a></span>
 
                 
                 
@@ -461,98 +460,39 @@
       
 
       
-        <p><i class="fa fa-quote-left"></i> MySQL常见的三种存储引擎 <i class="fa fa-quote-right"></i></p>
+        <p><i class="fa fa-quote-left"></i> Linux操作系统 <i class="fa fa-quote-right"></i></p>
 <a id="more"></a>
 
-<h3 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h3><p>数据库存储引擎是数据库底层软件组织，数据库管理系统（DBMS）使用数据引擎进行创建、查询、更新和删除数据。不同的存储引擎提供不同的存储机制、索引技巧、锁定水平等功能，使用不同的存储引擎，还可以 获得特定的功能。现在许多不同的数据库管理系统都支持多种不同的数据引擎。MySql的核心就是插件式存储引擎。</p>
-<p>下图是MySQL的体系结构图，可以大致看一下存储引擎的位置：</p>
-<img src="/2018/08/12/2018-08-12-MySQL存储引擎/pic1.png">
+<p><strong>1、是否能用管道做大数据量的通信，为什么？</strong></p>
+<blockquote>
+<p>能，管道是在内核的一块缓冲区，由文件系统的高速缓冲区构成，虽然管道容量有限，但是合理分段的情况下可以较高效的传递大量数据</p>
+</blockquote>
+<p><strong>2、写程序验证信号处理函数是否会被子进程继承</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handler</span><span class="params">(<span class="keyword">int</span> signum)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"this signal is %d\n"</span>, signum);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置信号处理函数</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sa_usr</span>;</span></span><br><span class="line">    sa_usr.sa_flags = <span class="number">0</span>;</span><br><span class="line">    sa_usr.sa_handler = handler;</span><br><span class="line">    sigaction(SIGINT, &amp;sa_usr, <span class="literal">NULL</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">pid_t</span> pid = <span class="number">0</span>;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;&#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"father\n"</span>);</span><br><span class="line">        kill(pid, SIGINT);  <span class="comment">// 发送信号</span></span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        kill(pid, SIGKILL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>我们来查看MySQL支持的存储引擎有哪些:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SHOW ENGINES; </span><br><span class="line"></span><br><span class="line">Engine            |Support|Comment                                                                         |Transactions|XA |Savepoints|</span><br><span class="line">------------------|-------|--------------------------------------------------------------------------------|------------|---|----------|</span><br><span class="line">CSV               |YES    |CSV storage engine                                                              |NO          |NO |NO        |</span><br><span class="line">MRG_MyISAM        |YES    |Collection of identical MyISAM tables                                           |NO          |NO |NO        |</span><br><span class="line">MyISAM            |YES    |MyISAM storage engine                                                           |NO          |NO |NO        |</span><br><span class="line">SEQUENCE          |YES    |Generated tables filled with sequential values                                  |YES         |NO |YES       |</span><br><span class="line">PERFORMANCE_SCHEMA|YES    |Performance Schema                                                              |NO          |NO |NO        |</span><br><span class="line">MEMORY            |YES    |Hash based, stored in memory, useful for temporary tables                       |NO          |NO |NO        |</span><br><span class="line">Aria              |YES    |Crash-safe tables with MyISAM heritage                                          |NO          |NO |NO        |</span><br><span class="line">InnoDB            |DEFAULT|Supports transactions, row-level locking, foreign keys and encryption for tables|YES         |YES|YES       |</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>以上程序的运行结果是：</p>
+<p>child<br>father<br>this signal is 2</p>
+<p>所以，子进程会继承父进程的信号处理函数</p>
+</blockquote>
+<p><strong>3、分析cd命令是否会fork进程执行（需要写出分析过程）</strong></p>
+<blockquote>
+<p>不会，cd命令会在shell启动时被加载并驻留在系统内存，因此不需要衍生出一个子进程</p>
+</blockquote>
+<p><strong>4、关闭TCP连接时，为什么所绑定的端要处于TIME_WAIT状态2msl后才进入CLOSED状态，请解释TIME_WAIT状态的作用</strong></p>
+<blockquote>
+<p>保证连接能可靠关闭：若对方在超时时间内没有收到ACK，则会重发FIN，而所绑定的端如果不等待2msl，则收不到重复的FIN；</p>
+<p>保证本次连接的数据消失：在某些极端情况下，新的TCP连接不会混淆数据包。</p>
+</blockquote>
+<p><strong>5、使用python+gprof2dot/FlameGraph分析一个应用程序。分析程序的调用情况，找出耗时的代码块。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(n)</span>:</span> </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo1</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i):</span><br><span class="line">            foo(j)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo2</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            foo(j)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">t</span><span class="params">()</span>:</span></span><br><span class="line">    time.sleep(<span class="number">0.001</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    foo(<span class="number">100</span>)</span><br><span class="line">    foo1(<span class="number">100</span>)</span><br><span class="line">    foo2(<span class="number">100</span>)</span><br><span class="line">    t()</span><br></pre></td></tr></table></figure>
 
-<p>可以看到，MySQL支持的存储引擎有很多种，但在本文只讲其中最为常用的三种：InnoDB、MyISAM、MEMORY。</p>
-<h3 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h3><p>InnoDB是MySQL的默认存储引擎，也是事务性数据库的首选引擎。</p>
-<p>主要特性：</p>
-<ul>
-<li>支持ACID事务（具有提交、回滚和崩溃恢复能力的事务安全）。</li>
-<li>锁定在行级并且也在SELECT语句中提供一个类似<a href="http://lib.csdn.net/base/oracle" target="_blank" rel="noopener">Oracle</a>的非锁定读。在SQL查询中，可以自由地将InnoDB类型的表和其他MySQL的表类型混合起来，甚至在同一个查询中也可以混合。</li>
-<li>在主内存中缓存数据和索引而维持它自己的缓冲池。InnoDB将它的表和索引在一个逻辑表空间中，表空间可以包含数个文件（或原始磁盘文件）。这与MyISAM表不同，比如在MyISAM表中每个表被存放在分离的文件中。InnoDB表可以是任何尺寸，即使在文件尺寸被限制为2GB的操作系统上。</li>
-<li>支持外键完整性约束，存储表中的数据时，每张表的存储都按主键顺序存放。如果没有显示在表定义时指定主键，InnoDB会为每一行生成一个6字节的ROWID，并以此作为主键。</li>
-<li>不创建目录。使用InnoDB时，MySQL将在MySQL数据目录下创建一个名为ibdata1的10MB大小的自动扩展数据文件，以及两个名为ib_logfile0和ib_logfile1的5MB大小的日志文件。</li>
-</ul>
-<p>可能的缺点：</p>
-<ul>
-<li>不支持FULLTEXT类型的索引</li>
-<li>没有保存表的行数，在执行select count(*) from 表名 时，需要遍历扫描全表</li>
-</ul>
-<p>适用场景：</p>
-<ul>
-<li>经常需要更新的表，适合处理多重并发的更新请求</li>
-<li>支持事务</li>
-<li>外键约束</li>
-<li>可以从灾难中恢复（通过bin-log日志等）</li>
-<li>支持自动增加列属性auto_increment</li>
-</ul>
-<h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h3><p>MyIsam引擎是MySQL主流引擎之一，基于ISAM存储引擎，并对其进行扩展。</p>
-<p>主要特性：</p>
-<ul>
-<li>大文件（达到63位文件长度）在支持大文件的文件系统和操作系统上被支持</li>
-<li>当把删除和更新及插入操作混合使用的时候，动态尺寸的行产生更少碎片。这要通过合并相邻被删除的块，以及若下一个块被删除，就扩展到下一块自动完成</li>
-<li>每个MyISAM表最大索引数是64，这可以通过重新编译来改变。每个索引最大的列数是16</li>
-<li>最大的键长度是1000字节，这也可以通过编译来改变，对于键长度超过250字节的情况，一个超过1024字节的键将被用上</li>
-<li>BLOB和TEXT列可以被索引</li>
-<li>NULL被允许在索引的列中，这个值占每个键的0~1个字节</li>
-<li>所有数字键值以高字节优先被存储以允许一个更高的索引压缩</li>
-<li>每个MyISAM类型的表都有一个AUTO_INCREMENT的内部列，当INSERT和UPDATE操作的时候该列被更新，同时AUTO_INCREMENT列将被刷新。所以说，MyISAM类型表的AUTO_INCREMENT列更新比InnoDB类型的AUTO_INCREMENT更快</li>
-<li>可以把数据文件和索引文件放在不同目录</li>
-<li>每个字符列可以有不同的字符集</li>
-<li>有VARCHAR的表可以固定或动态记录长度</li>
-<li>VARCHAR和CHAR列可以多达64KB</li>
-</ul>
-<p>可能的缺点：</p>
-<ul>
-<li>不能在表损坏后恢复数据</li>
-</ul>
-<p>适用场景：</p>
-<ul>
-<li>MyIsam极度强调快速读取</li>
-<li>MyIsam表中自动存储了表的行数，需要时直接获取即可</li>
-<li>适用于不需要事物支持、外键功能、及需要对整个表加锁的情形</li>
-</ul>
-<h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><p>MEMORY存储引擎将表中的数据存储到内存中，<strong>为查询和引用其他表数据提供快速访问</strong>。</p>
-<p>主要特性：</p>
-<ul>
-<li>MEMORY表的每个表可以有多达32个索引，每个索引16列，以及500字节的最大键长度</li>
-<li>MEMORY存储引擎执行HASH和BTREE缩影</li>
-<li>可以在一个MEMORY表中有非唯一键值</li>
-<li>MEMORY表使用一个固定的记录长度格式</li>
-<li>MEMORY不支持BLOB或TEXT列</li>
-<li>MEMORY支持AUTO_INCREMENT列和对可包含NULL值的列的索引</li>
-<li>MEMORY表在所由客户端之间共享（就像其他任何非TEMPORARY表）</li>
-<li>MEMORY表内存被存储在内存中，内存是MEMORY表和服务器在查询处理时的空闲中，创建的内部表共享</li>
-<li>当不再需要MEMORY表的内容时，要释放被MEMORY表使用的内存，应该执行 DELETE FROM或 TRUNCATE TABLE，或者删除整个表（使用DROP TABLE）</li>
-</ul>
-<p>可能的缺点：</p>
-<ul>
-<li>要求存储的数据是数据长度不变的格式，Blob和Text类型数据不可用（长度不固定）</li>
-<li>用完表格后表格便被删除</li>
-</ul>
-<p>适用场景：</p>
-<ul>
-<li>那些内容变化不频繁的代码表，或者作为统计操作的中间结果表，便于高效地堆中间结果进行分析并得到最终的统计结果</li>
-<li>目标数据比较小，而且非常频繁的进行访问，在内存中存放数据，如果太大的数据会造成内存溢出。可以通过参数max_heap_table_size控制Memory表的大小，限制Memory表的最大的大小</li>
-<li>数据是临时的，而且必须立即能取出用到，于是可存放在内存中</li>
-<li>存储在Memory表中的数据如果突然间丢失的话也没有太大的关系</li>
-</ul>
-<h3 id="存储引擎的选择"><a href="#存储引擎的选择" class="headerlink" title="存储引擎的选择"></a>存储引擎的选择</h3><p>不同的数据处理选择适合的存储引擎是使用MySQL的一大优势。</p>
-<img src="/2018/08/12/2018-08-12-MySQL存储引擎/pic2.png">
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m cProfile -o test_gprof2dot.pstats test_gprof2dot.py</span><br><span class="line">python -m gprof2dot -f pstats test_gprof2dot.pstats | dot -T png -o test_gprof2dot.png</span><br></pre></td></tr></table></figure>
 
-<p>InnoDB： <strong>支持事务处理，支持外键，支持崩溃修复能力和并发控制。</strong>如果需要对事务的完整性要求比较高（比如银行），要求实现并发控制（比如售票），那选择InnoDB有很大的优势。如果需要频繁的更新、删除操作的数据库，也可以选择InnoDB，因为支持事务的提交（commit）和回滚（rollback）。</p>
-<p>MyISAM： <strong>插入数据快，空间和内存使用比较低。</strong>如果表主要是用于插入新记录和读出记录，那么选择MyISAM能实现处理高效率。如果应用的完整性、并发性要求比 较低，也可以使用。</p>
-<p>MEMORY： <strong>所有的数据都在内存中，数据的处理速度快，但是安全性不高。</strong>如果需要很快的读写速度，对数据的安全性要求较低，可以选择MEMOEY。它对表的大小有要求，不能建立太大的表。所以，这类数据库只使用在相对较小的数据库表。</p>
-<p>注意：同一个数据库也可以使用多种存储引擎的表。如果一个表要求比较高的事务处理，可以选择InnoDB。这个数据库中可以将查询要求比较高的表选择MyISAM存储。如果该数据库需要一个用于查询的临时表，可以选择MEMORY存储引擎。</p>
-
+<blockquote>
+<p>得到的程序调用图如下，可以看到最耗时的是被调用了14951次的foo方法，其次是调用了foo方法10000次的foo2方法，再其次是调用了foo方法4950次的foo1方法，最后是1ms的sleep。</p>
+</blockquote>
+<img src="/2020/07/31/2020-07-31-新人培训之Linux小作业/test_gprof2dot.png">
       
     </div>
     
@@ -574,11 +514,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag">MySQL</i></a>
-          
-            <a href="/tags/数据库/" rel="tag"><i class="fa fa-tag">数据库</i></a>
-          
-            <a href="/tags/存储引擎/" rel="tag"><i class="fa fa-tag">存储引擎</i></a>
+            <a href="/tags/操作系统/" rel="tag"><i class="fa fa-tag">操作系统</i></a>
           
         </div>
       
@@ -591,8 +527,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/01/2018-08-01-TCPIP协议栈/" rel="next" title="TCP/IP协议栈">
-                <i class="fa fa-chevron-left"></i> TCP/IP协议栈
+              <a href="/2020/07/28/2020-07-28-新人培训之Web安全小作业/" rel="next" title="新人培训之Web安全小作业">
+                <i class="fa fa-chevron-left"></i> 新人培训之Web安全小作业
               </a>
             
           </div>
@@ -600,10 +536,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/13/2018-08-13-MySQL事务/" rel="prev" title="MySQL事务">
-                MySQL事务 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -647,17 +579,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <div class="site-overview-wrap sidebar-panel">
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -845,23 +768,6 @@
         </div>
       </div>
 
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储引擎"><span class="nav-number">1.</span> <span class="nav-text">存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB"><span class="nav-number">2.</span> <span class="nav-text">InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM"><span class="nav-number">3.</span> <span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MEMORY"><span class="nav-number">4.</span> <span class="nav-text">MEMORY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储引擎的选择"><span class="nav-number">5.</span> <span class="nav-text">存储引擎的选择</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
       
 
       
