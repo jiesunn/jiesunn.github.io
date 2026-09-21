@@ -1,25 +1,17 @@
+# ===== 基础 =====
 baseURL: "https://jiesunn.github.io/"
 title: "JieSunn - BLOG"
-languageCode: "zh-CN"
 theme: "PaperMod"
+locale: "zh-CN"                # v0.158+ 用 locale 替代 languageCode
+timeZone: "Asia/Shanghai"
+hasCJKLanguage: true           # 中文阅读时长、字数统计更准
+enableRobotsTXT: true
 
-params:
-  ShowCodeCopyButtons: true
-  ShowReadingTime: true
-  ShowShareButtons: true
-  ShowLastMod: false
-  homeInfoParams:
-    Title: "你好，欢迎来到我的博客"
-    Content: >
-      这里记录技术笔记与日常思考。
+# ===== 分页 =====
+pagination:
+  pagerSize: 10
 
-frontmatter:
-  lastmod:
-    - lastmod
-    - :git
-    - :fileModTime
-    - :default
-
+# ===== 菜单 =====
 menu:
   main:
     - identifier: categories
@@ -34,3 +26,64 @@ menu:
       name: 归档
       url: /archives/
       weight: 30
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 40
+
+# ===== PaperMod 参数 =====
+params:
+  env: production
+  description: "记录技术笔记与日常思考"
+
+  # 主题模式
+  defaultTheme: auto          # auto / light / dark
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowLastMod: false          # 关掉“最后更新”那行，避免显示 Git 时间
+  ShowToc: true               # 文章目录
+  TocOpen: false
+  comments: false
+
+  # 首页信息
+  homeInfoParams:
+    Title: "你好 👋"
+    Content: >
+      这里记录技术笔记与日常思考。
+
+  # 社交图标（不需要的删掉）
+  socialIcons:
+    - name: github
+      url: "https://github.com/jiesunn"
+    - name: email
+      url: "mailto:jiesunn@foxmail.com"
+
+  # 编辑按钮（不显示就删）
+  editPost:
+    URL: "https://github.com/jiesunn/jiesunn.github.io/tree/master/content"
+    Text: "编辑"
+    appendFilePath: true
+
+# ===== 输出格式（开启搜索、归档、RSS）=====
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+# ===== Markdown 渲染 =====
+markup:
+  goldmark:
+    renderer:
+      unsafe: true            # 允许文章里写原生 HTML
+  highlight:
+    noClasses: false
+    lineNos: true
+    style: monokai
+
+# ===== 忽略无害警告 =====
+ignoreLogs:
+  - warning-goldmark-raw-html
